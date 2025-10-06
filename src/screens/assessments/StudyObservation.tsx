@@ -362,69 +362,46 @@ const StudyObservation = () => {
     }
   };
 
+
   const fetchBaselineScores = async (participantId: string, studyId: string) => {
     setBaselineLoading(true);
     try {
       let factGScore = 0;
-      let distressValue = '0';
+      let distressScoreFromApi = '0';
 
       const today = new Date();
-      const todayStr = today.toISOString().split('T')[0];
 
-      // Fetch FACT-G data for today only
+      // Fetch FACT-G data for today
       const factGRes = await apiService.post('/getParticipantFactGQuestionBaseline', {
         StudyId: studyId,
         ParticipantId: participantId,
         CreatedDate: today,
       }) as { data: FactGResponse };
 
-      if (factGRes.data && factGRes.data.FinalScore) {
-        const parsedScore = Number(factGRes.data.FinalScore);
-        factGScore = isNaN(parsedScore) ? 0 : parsedScore;
-      } else {
-        factGScore = 0;
-      }
+      factGScore = (factGRes.data && factGRes.data.FinalScore)
+        ? Number(factGRes.data.FinalScore) || 0
+        : 0;
 
-      // Fetch distress score for today only
-      const distressRes = await apiService.post('/GetParticipantMedicalScreening', {
+      // Fetch distress score using correct spelling from API response
+      const screeningRes = await apiService.post('/GetParticipantMedicalScreening', {
         ParticipantId: participantId,
-        CreatedDate: todayStr,
-      }) as { data: DistressWeeklyResponse };
+      }) as { data: { ResponseData: { DistressTherometerScore: string }[] } };
 
-      const todayDistress = distressRes.data.ResponseData.find(item => {
-        if (!item.CreatedDate) return false;
-        const itemDateStr = item.CreatedDate.split(' ')[0]; // Adjust if needed
-        return itemDateStr === todayStr;
-      });
-      distressValue = todayDistress?.ScaleValue || '0';
-
-      if (!todayDistress && distressRes.data.ResponseData.length > 0) {
-        distressRes.data.ResponseData.sort((a, b) =>
-          b.CreatedDate.localeCompare(a.CreatedDate)
-        );
-        distressValue = distressRes.data.ResponseData[0].ScaleValue || '0';
-        console.log('Fallback distress value:', distressValue);
+      if (screeningRes.data && screeningRes.data.ResponseData.length > 0) {
+        distressScoreFromApi = screeningRes.data.ResponseData[0].DistressTherometerScore || '0';
       }
 
-
-      // Update the form and state values
       setFactGScore(factGScore.toString());
-      setDistressScore(distressValue);
+      setDistressScore(distressScoreFromApi);
       setFormValues(prev => ({
         ...prev,
         'SOFID-7': factGScore.toString(),
-        'SOFID-8': distressValue,
+        'SOFID-8': distressScoreFromApi,
       }));
-      // setBaselineDisabled(factGScore > 0); 
-
     } catch (error) {
       setFactGScore('0');
       setDistressScore('0');
-      setFormValues(prev => ({
-        ...prev,
-        'SOFID-7': '0',
-        'SOFID-8': '0',
-      }));
+      setFormValues(prev => ({ ...prev, 'SOFID-7': '0', 'SOFID-8': '0' }));
     } finally {
       setBaselineLoading(false);
     }

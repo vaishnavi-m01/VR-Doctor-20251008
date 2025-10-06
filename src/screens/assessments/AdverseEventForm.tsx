@@ -363,6 +363,7 @@ export default function AdverseEventForm() {
         fetchAeData();
     }, [patientId, sessionNo, studyId]);
 
+    
 
     const handleValidate = () => {
         const newErrors: { [key: string]: string } = {};
@@ -761,28 +762,10 @@ export default function AdverseEventForm() {
                     </View>
                     <View className="mt-4">
                         <Field
-                            label={
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <Text style={{ 
-                                    color: errors?.Description ? '#EF4444' : '#2c4a43', 
-                                    fontSize: 14, 
-                                    fontWeight: '500' 
-                                }}>
-                                    Description (symptoms, severity)
-                                </Text>
-                                <Text style={{ 
-                                    color: '#EF4444', 
-                                    fontSize: 16, 
-                                    fontWeight: '500', 
-                                    marginLeft: 5, 
-                                    marginBottom: 3 
-                                }}>
-                                    *
-                                </Text>
-                                </View>
-                            }
+                            label=' Description (symptoms, severity)'
                             placeholder="symptoms, context, severity..."
                             multiline
+                            required
                             value={Description ?? ""}
                             error={errors?.Description}
                             onChangeText={(text) => {
@@ -847,24 +830,8 @@ export default function AdverseEventForm() {
                     </View>
                     <View className="mt-6">
                        <DropdownField
-                        label={
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <Text style={{ 
-                                color: errors?.vrContentType ? '#EF4444' : '#2c4a43', 
-                                fontSize: 14, 
-                                fontWeight: '500' 
-                            }}>
-                                VR Content Type at AE
-                            </Text>
-                            <Text style={{ 
-                                color: 'red', 
-                                fontSize: 16, 
-                                fontWeight: '500', 
-                                marginLeft: 5, 
-                                marginBottom: 3 
-                            }}>*</Text>
-                            </View>
-                        }
+                        label=' VR Content Type at AE'
+                        required
                         value={vrContentType}
                         error={errors?.vrContentType}
                         onValueChange={(val) => {
@@ -1042,24 +1009,8 @@ export default function AdverseEventForm() {
                         <DateField label="Date physician notified" value={physicianDateTime} onChange={setPhysicianDateTime} />
                         <View className="flex-1">
                            <Field 
-                                label={
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Text style={{ 
-                                        color: errors?.physicianName ? '#EF4444' : '#2c4a43', 
-                                        fontSize: 14, 
-                                        fontWeight: '500' 
-                                    }}>
-                                        Physician Name
-                                    </Text>
-                                    <Text style={{ 
-                                        color: '#EF4444', 
-                                        fontSize: 16, 
-                                        fontWeight: '500', 
-                                        marginLeft: 5, 
-                                        marginBottom: 3 
-                                    }}>*</Text>
-                                    </View>
-                                }
+                                label=' Physician Name'
+                                required
                                 placeholder="Dr. _____" 
                                 value={physicianName} 
                                 onChangeText={(text) => {
@@ -1098,7 +1049,7 @@ export default function AdverseEventForm() {
                             options={[
                                 { label: "Yes", value: "Yes" },
                                 { label: "No", value: "No" },
-                                { label: "Uncertain", value: "Uncertain" },
+                                // { label: "Uncertain", value: "Uncertain" },
                             ]}
                             value={aeRelated || undefined}
                             onChange={(val) => {
@@ -1184,24 +1135,8 @@ export default function AdverseEventForm() {
                     <View className="flex-row gap-3 mt-2">
                        <View className="flex-1">
                             <Field 
-                                label={
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Text style={{ 
-                                    color: errors?.followUpParticipantStatus ? '#EF4444' : '#2c4a43', 
-                                    fontSize: 14, 
-                                    fontWeight: '500' 
-                                    }}>
-                                    Participant status during follow-up
-                                    </Text>
-                                    <Text style={{ 
-                                    color: '#EF4444', 
-                                    fontSize: 16, 
-                                    fontWeight: '500', 
-                                    marginLeft: 5, 
-                                    marginBottom: 3 
-                                    }}>*</Text>
-                                </View>
-                                }
+                                label='Participant status during follow-up'
+                                required
                                 placeholder="Notes on Clinical status..."
                                 multiline
                                 value={followUpParticipantStatus}
