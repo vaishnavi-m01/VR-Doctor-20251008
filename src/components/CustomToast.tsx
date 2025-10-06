@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { View, Text, Animated, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface CustomToastProps {
@@ -14,25 +14,44 @@ interface CustomToastProps {
 }
 
 export default function CustomToast({ message, type = 'info', duration = 3000, onDismiss, buttons }: CustomToastProps) {
-  const [opacity] = useState(new Animated.Value(0));
+  const opacity = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(-100)).current; // slide from above
 
   useEffect(() => {
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-
-    const timer = setTimeout(() => {
+    // Animate in: fade in + slide down
+    Animated.parallel([
       Animated.timing(opacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
         toValue: 0,
         duration: 300,
         useNativeDriver: true,
-      }).start(() => onDismiss && onDismiss());
+      }),
+    ]).start();
+
+    const timer = setTimeout(() => {
+      // Animate out: fade out + slide up
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: -100,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        if (onDismiss) onDismiss();
+      });
     }, duration);
 
     return () => clearTimeout(timer);
-  }, [opacity, duration, onDismiss]);
+  }, [duration, onDismiss, opacity, slideAnim]);
 
   const backgroundColor =
     type === 'success' ? '#4caf50' :
@@ -40,22 +59,20 @@ export default function CustomToast({ message, type = 'info', duration = 3000, o
     '#2196f3';  // info
 
   return (
-    <Animated.View style={[styles.container, { opacity, backgroundColor }]}>
+    <Animated.View style={[styles.container, { opacity, backgroundColor, transform: [{ translateY: slideAnim }] }]}>
       <Text style={styles.text}>{message}</Text>
       {buttons && buttons.length > 0 && (
         <View style={styles.buttonsContainer}>
           {buttons.map((btn, index) => (
-           <TouchableOpacity
-  key={index}
-  onPress={() => {
-    console.log(`Button "${btn.text}" pressed`);
-    if (btn.onPress) btn.onPress();
-  }}
-  style={[styles.button, btn.style === 'cancel' ? styles.cancelButton : null]}
->
-  <Text style={styles.buttonText}>{btn.text}</Text>
-</TouchableOpacity>
-
+            <TouchableOpacity
+              key={index}
+              onPress={() => {
+                if (btn.onPress) btn.onPress();
+              }}
+              style={[styles.button, btn.style === 'cancel' ? styles.cancelButton : null]}
+            >
+              <Text style={styles.buttonText}>{btn.text}</Text>
+            </TouchableOpacity>
           ))}
         </View>
       )}
@@ -71,7 +88,7 @@ export default function CustomToast({ message, type = 'info', duration = 3000, o
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 40,
+    top: 60, // show near top of screen
     left: 20,
     right: 20,
     padding: 12,
@@ -85,6 +102,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     flexWrap: 'wrap',
+    zIndex: 1000,
   },
   text: {
     color: 'white',

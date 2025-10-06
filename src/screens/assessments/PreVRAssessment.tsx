@@ -117,6 +117,7 @@ export default function PreVRAssessment() {
     setToastVisible(true);
   };
 
+
   const fetchAvailableSessions = async () => {
     try {
       const response = await apiService.post<GetSessionsResponse>("/GetParticipantVRSessions", {
