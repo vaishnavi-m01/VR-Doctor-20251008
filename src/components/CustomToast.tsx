@@ -53,10 +53,11 @@ export default function CustomToast({ message, type = 'info', duration = 3000, o
     return () => clearTimeout(timer);
   }, [duration, onDismiss, opacity, slideAnim]);
 
-  const backgroundColor =
-    type === 'success' ? '#4caf50' :
-    type === 'error' ? '#f44336' :
-    '#2196f3';  // info
+ const backgroundColor =
+  type === 'success' ? 'rgb(240, 253, 244)' :  // a very light green background (bg-green-50)
+  type === 'error' ? '#f44336' :                // keep the error red as is, or customize if needed
+  'rgb(187, 247, 208)';                         // a light green shade from border-green-200 for info
+
 
   return (
     <Animated.View style={[styles.container, { opacity, backgroundColor, transform: [{ translateY: slideAnim }] }]}>
@@ -88,29 +89,33 @@ export default function CustomToast({ message, type = 'info', duration = 3000, o
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 60, // show near top of screen
+    top: 60,
     left: 20,
     right: 20,
     padding: 12,
-    borderRadius: 8,
+    borderRadius: 8,    
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
+    // Box shadow equivalent for React Native using shadow props:
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
     flexWrap: 'wrap',
     zIndex: 1000,
+    backgroundColor: 'rgb(240, 253, 244)', // bg-green-50 with full opacity
+    borderColor: 'rgb(187, 247, 208)', // border-green-200 with full opacity
+    borderWidth: 1, // Assuming you want border width for border-green-200
   },
   text: {
-    color: 'white',
+    color: 'black',
     fontSize: 16,
     flex: 1,
   },
   dismissText: {
-    color: 'white',
+    color: 'black',
     fontWeight: 'bold',
     marginLeft: 12,
     fontSize: 18,
@@ -123,14 +128,15 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+   backgroundColor: 'rgba(255,255,255,0.6)',
     borderRadius: 4,
   },
   cancelButton: {
     backgroundColor: 'rgba(255,255,255,0.6)',
   },
   buttonText: {
-    color: 'white',
+    color: 'red',
     fontWeight: '600',
   },
 });
+
