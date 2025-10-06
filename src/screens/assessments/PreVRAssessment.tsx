@@ -287,8 +287,9 @@ export default function PreVRAssessment() {
 
       if (response.status === 200) {
         // Check if any answer is "Yes"
-        const hasYesAnswer = preQuestions.some(q => 
-          responses[q.PPVRQMID]?.ScaleValue?.toLowerCase() === 'yes'
+        const hasYesAnswer = preQuestions.some(
+          (q) =>
+            (responses[q.PPVRQMID]?.ScaleValue || '').trim().toLowerCase() === 'yes'
         );
 
         Toast.show({
@@ -298,12 +299,14 @@ export default function PreVRAssessment() {
             ? 'Pre VR Questionnaire updated successfully!'
             : 'Pre VR Questionnaire added successfully!',
           position: 'top',
-          visibilityTime: 1500,
+          visibilityTime: 1000,
         });
 
         // Navigate based on answers
         if (hasYesAnswer) {
           // Show confirmation popup if any answer is "Yes"
+          console.log(" Detected at least one YES answer");
+
           setTimeout(() => {
             Alert.alert(
               'Continue VR Session?',
@@ -329,7 +332,7 @@ export default function PreVRAssessment() {
               ],
               { cancelable: false }
             );
-          }, 1500);
+          }, 2000);
         } else {
           // If all answers are "No", navigate directly to VR Session Setup
           setTimeout(() => {
@@ -340,7 +343,7 @@ export default function PreVRAssessment() {
               RandomizationId,
               sessionNo: sessionNo || undefined
             });
-          }, 1500);
+          }, 2000);
         }
       } else {
         Toast.show({
@@ -417,7 +420,7 @@ export default function PreVRAssessment() {
                 fontWeight: "600",
                 fontSize: 16,
                 lineHeight: 24,
-                marginTop:4
+                marginTop: 4
               }}
             >
               Randomization ID: {RandomizationId || "N/A"}

@@ -3,12 +3,19 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/types';
 import SubMenu, { SubMenuItem } from '../../components/SubMenu';
+import { useAuth } from 'src/hooks/useAuth';
 
 type HomeTabNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+
+
+
 export default function HomeTab() {
   const navigation = useNavigation<HomeTabNavigationProp>();
+  const { user } = useAuth();
 
+
+  console.log("USER", user)
   const dashboardItems: SubMenuItem[] = [
     {
       id: 'physician-dashboard',
@@ -28,24 +35,48 @@ export default function HomeTab() {
       title: 'Session Management',
       subtitle: 'VR session setup and control',
       route: 'SessionSetupScreen',
-       params: { patientId: 1, age: 35, studyId: 1 }
+      params: { patientId: 1, age: 35, studyId: 1 }
     },
     {
       id: 'assessments',
       title: 'Assessments',
       subtitle: 'Patient evaluation forms',
       route: 'PreVR',
-      params: { patientId: 'PID-3', studyId: 'CS-0001', age: 35 } 
+      params: { patientId: 'PID-3', studyId: 'CS-0001', age: 35 }
     }
   ];
+
 
   return (
     <ScrollView className="flex-1 bg-white p-4">
       {/* Header */}
-      <View className="mb-6">
-        <Text className="text-3xl font-bold text-[#0e4336] mb-2">Welcome Back!</Text>
-        <Text className="text-lg text-gray-600">Manage your VR therapy sessions and patient assessments</Text>
+
+      <View className="flex-row justify-between">
+        <View className="mb-6">
+          <Text className="text-3xl font-bold text-[#0e4336] mb-2">Welcome Back!</Text>
+          <Text className="text-lg text-gray-600">Manage your VR therapy sessions and patient assessments</Text>
+        </View>
+
+        <View className="mb-6 items-start">
+          {/* Name */}
+          <Text className="text-2xl font-extrabold text-[#0E4336] mb-1 tracking-wide">
+            {user?.FirstName
+              ? `${user.FirstName}${user.LastName ? " " + user.LastName : ""}`
+              : "User"}
+          </Text>
+
+          {/* Role */}
+          <Text className="text-base font-semibold text-[#16A34A] opacity-90 mt-1">
+            {user?.RoleName || "Member"}
+          </Text>
+
+        </View>
+
       </View>
+
+
+
+
 
       {/* Dashboard Sub-Menus */}
       <View className="mb-6">
