@@ -386,7 +386,7 @@ const StudyObservation = () => {
       }
 
       // Fetch distress score for today only
-      const distressRes = await apiService.post('/GetParticipantDistressWeeklyScore', {
+      const distressRes = await apiService.post('/GetParticipantMedicalScreening', {
         ParticipantId: participantId,
         CreatedDate: todayStr,
       }) as { data: DistressWeeklyResponse };

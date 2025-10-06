@@ -763,20 +763,40 @@ export default function AdverseEventForm() {
                         <Field
                             label={
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                                        Description (symptoms, severity)
-                                    </Text>
-                                     <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 3 }}>
-                                        *
-                                    </Text>
+                                <Text style={{ 
+                                    color: errors?.Description ? '#EF4444' : '#2c4a43', 
+                                    fontSize: 14, 
+                                    fontWeight: '500' 
+                                }}>
+                                    Description (symptoms, severity)
+                                </Text>
+                                <Text style={{ 
+                                    color: '#EF4444', 
+                                    fontSize: 16, 
+                                    fontWeight: '500', 
+                                    marginLeft: 5, 
+                                    marginBottom: 3 
+                                }}>
+                                    *
+                                </Text>
                                 </View>
                             }
                             placeholder="symptoms, context, severity..."
                             multiline
                             value={Description ?? ""}
                             error={errors?.Description}
-                            onChangeText={setdescription}
+                            onChangeText={(text) => {
+                                setdescription(text);
+                                if (errors?.Description) {
+                                setErrors((prev) => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors.Description;
+                                    return newErrors;
+                                });
+                                }
+                            }}
                         />
+
                     </View>
 
                     <View className="mt-4">
@@ -804,7 +824,7 @@ export default function AdverseEventForm() {
                                 className={`flex-1 flex-row items-center justify-center rounded-full py-3 px-2 ${completed === 'Yes' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
                                     }`}
                             >
-                                <Text className={`font-medium text-xs ${completed === 'Yes' ? 'text-white' : 'text-[#2c4a43]'}`}>
+                                <Text className={`font-medium text-sm ${completed === 'Yes' ? 'text-white' : 'text-[#2c4a43]'}`}>
                                     Yes
                                 </Text>
                             </Pressable>
@@ -818,41 +838,48 @@ export default function AdverseEventForm() {
                                 className={`flex-1 flex-row items-center justify-center rounded-full py-3 px-2 ${completed === 'No' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
                                     }`}
                             >
-                                <Text className={`font-medium text-xs ${completed === 'No' ? 'text-white' : 'text-[#2c4a43]'}`}>
+                                <Text className={`font-medium text-sm ${completed === 'No' ? 'text-white' : 'text-[#2c4a43]'}`}>
                                     No
                                 </Text>
                             </Pressable>
                         </View>
 
-
                     </View>
                     <View className="mt-6">
-                        <DropdownField
-                            label={
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                                        VR Content Type at AE
-                                    </Text>
-                                      <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 6 }}>
-                                        *
-                                    </Text>
-                                </View>
-                            }
-                            value={vrContentType}
-                            error={errors?.vrContentType}
-                            onValueChange={(val) => {
-                                setVrContentType(val);
-                                setErrors((prev) => ({ ...prev, vrContentType: "" }));
-                            }}
-                            options={[
-                                { label: "Chemotherapy", value: "chemotherapy" },
-                                { label: "Anxiety", value: "anxiety" },
-                                { label: "Relaxation", value: "relaxation" },
-                                { label: "Pain Management", value: "pain" },
-                            ]}
+                       <DropdownField
+                        label={
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Text style={{ 
+                                color: errors?.vrContentType ? '#EF4444' : '#2c4a43', 
+                                fontSize: 14, 
+                                fontWeight: '500' 
+                            }}>
+                                VR Content Type at AE
+                            </Text>
+                            <Text style={{ 
+                                color: 'red', 
+                                fontSize: 16, 
+                                fontWeight: '500', 
+                                marginLeft: 5, 
+                                marginBottom: 3 
+                            }}>*</Text>
+                            </View>
+                        }
+                        value={vrContentType}
+                        error={errors?.vrContentType}
+                        onValueChange={(val) => {
+                            setVrContentType(val);
+                            setErrors((prev) => ({ ...prev, vrContentType: "" }));
+                        }}
+                        options={[
+                            { label: "Chemotherapy", value: "chemotherapy" },
+                            { label: "Anxiety", value: "anxiety" },
+                            { label: "Relaxation", value: "relaxation" },
+                            { label: "Pain Management", value: "pain" },
+                        ]}
                         />
-                    </View>
 
+                    </View>
 
                     <View className="flex-1  mt-4">
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -873,7 +900,7 @@ export default function AdverseEventForm() {
                                 className={`flex-1 flex-row items-center justify-center rounded-full py-3 px-2 ${guidance === 'Yes' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
                                     }`}
                             >
-                                <Text className={`font-medium text-xs ${guidance === 'Yes' ? 'text-white' : 'text-[#2c4a43]'}`}>Yes</Text>
+                                <Text className={`font-medium text-sm ${guidance === 'Yes' ? 'text-white' : 'text-[#2c4a43]'}`}>Yes</Text>
                             </Pressable>
 
                             {/* No Button */}
@@ -885,7 +912,7 @@ export default function AdverseEventForm() {
                                 className={`flex-1 flex-row items-center justify-center rounded-full py-3 px-2 ${guidance === 'No' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
                                     }`}
                             >
-                                <Text className={`font-medium text-xs ${guidance === 'No' ? 'text-white' : 'text-[#2c4a43]'}`}>No</Text>
+                                <Text className={`font-medium text-sm ${guidance === 'No' ? 'text-white' : 'text-[#2c4a43]'}`}>No</Text>
                             </Pressable>
                         </View>
 
@@ -1014,23 +1041,41 @@ export default function AdverseEventForm() {
                     <View className="flex-row gap-3 mt-4">
                         <DateField label="Date physician notified" value={physicianDateTime} onChange={setPhysicianDateTime} />
                         <View className="flex-1">
-                            <Field 
+                           <Field 
                                 label={
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                                            Physician name
-                                        </Text>
-                                         <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom:0 }}>
-                                            *
-                                        </Text>
+                                    <Text style={{ 
+                                        color: errors?.physicianName ? '#EF4444' : '#2c4a43', 
+                                        fontSize: 14, 
+                                        fontWeight: '500' 
+                                    }}>
+                                        Physician Name
+                                    </Text>
+                                    <Text style={{ 
+                                        color: '#EF4444', 
+                                        fontSize: 16, 
+                                        fontWeight: '500', 
+                                        marginLeft: 5, 
+                                        marginBottom: 3 
+                                    }}>*</Text>
                                     </View>
                                 }
                                 placeholder="Dr. _____" 
                                 value={physicianName} 
-                                onChangeText={setPhysicianName} 
+                                onChangeText={(text) => {
+                                    setPhysicianName(text);
+                                    if (errors?.physicianName) {
+                                    setErrors((prev) => {
+                                        const newErrors = { ...prev };
+                                        delete newErrors.physicianName;
+                                        return newErrors;
+                                    });
+                                    }
+                                }}
                                 error={errors?.physicianName} 
-                            />
-                        </View>
+                                />
+
+                         </View>
                     </View>
                 </FormCard>
 
@@ -1137,25 +1182,45 @@ export default function AdverseEventForm() {
                     </View>
 
                     <View className="flex-row gap-3 mt-2">
-                        <View className="flex-1">
+                       <View className="flex-1">
                             <Field 
                                 label={
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                        <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                                            Participant status during follow-up
-                                        </Text>
-                                         <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 0 }}>
-                                            *
-                                        </Text>
-                                    </View>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <Text style={{ 
+                                    color: errors?.followUpParticipantStatus ? '#EF4444' : '#2c4a43', 
+                                    fontSize: 14, 
+                                    fontWeight: '500' 
+                                    }}>
+                                    Participant status during follow-up
+                                    </Text>
+                                    <Text style={{ 
+                                    color: '#EF4444', 
+                                    fontSize: 16, 
+                                    fontWeight: '500', 
+                                    marginLeft: 5, 
+                                    marginBottom: 3 
+                                    }}>*</Text>
+                                </View>
                                 }
-                                placeholder="Notes on Clinical status..." 
-                                multiline 
-                                value={followUpParticipantStatus} 
-                                onChangeText={setFollowUpParticipantStatus} 
-                                error={errors?.followUpParticipantStatus} 
+                                placeholder="Notes on Clinical status..."
+                                multiline
+                                value={followUpParticipantStatus}
+                                onChangeText={(text) => {
+                                setFollowUpParticipantStatus(text);
+                                // Clear error onChange 
+                                if (errors?.followUpParticipantStatus) {
+                                    setErrors((prev) => {
+                                    const newErrors = { ...prev };
+                                    delete newErrors.followUpParticipantStatus;
+                                    return newErrors;
+                                    });
+                                }
+                                }}
+                                error={errors?.followUpParticipantStatus}
                             />
                         </View>
+
+
                         <View className="flex-1">
                             <DateField label="Date" value={date} onChange={setDate} />
                         </View>

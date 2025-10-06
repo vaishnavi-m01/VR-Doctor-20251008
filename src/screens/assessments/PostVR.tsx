@@ -254,7 +254,7 @@ export default function PostVR() {
             value === 'Yes' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
           }`}
         >
-          <Text className={`text-lg mr-1 ${value === 'Yes' ? 'text-white' : 'text-[#2c4a43]'}`}>✅</Text>
+          <Text className={`text-lg mr-1 ${value === 'Yes' ? 'text-white' : 'text-[#2c4a43]'}`}></Text>
           <Text className={`font-medium text-sm ${value === 'Yes' ? 'text-white' : 'text-[#2c4a43]'}`}>
             Yes
           </Text>
@@ -265,7 +265,7 @@ export default function PostVR() {
             value === 'No' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
           }`}
         >
-          <Text className={`text-lg mr-1 ${value === 'No' ? 'text-white' : 'text-[#2c4a43]'}`}>❌</Text>
+          <Text className={`text-lg mr-1 ${value === 'No' ? 'text-white' : 'text-[#2c4a43]'}`}></Text>
           <Text className={`font-medium text-sm ${value === 'No' ? 'text-white' : 'text-[#2c4a43]'}`}>No</Text>
         </Pressable>
       </View>

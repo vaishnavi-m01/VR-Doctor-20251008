@@ -57,10 +57,7 @@ export function DropdownField({
         <Ionicons name="chevron-down" size={20} color={error ? "#f87171" : "#4b5f5a"} />
       </TouchableOpacity>
 
-      {/* Error Message */}
-      {error && (
-        <Text className="text-red-500 text-sm mt-2">{error}</Text>
-      )}
+     
 
       {/* Modal Dropdown */}
       <Modal
