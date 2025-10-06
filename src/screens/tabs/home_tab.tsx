@@ -59,14 +59,14 @@ export default function HomeTab() {
 
         <View className="mb-6 items-start">
           {/* Name */}
-          <Text className="text-2xl font-extrabold text-[#0E4336] mb-1 tracking-wide">
+          <Text className="text-xl font-extrabold text-[#0E4336] mb-1 tracking-wide">
             {user?.FirstName
               ? `${user.FirstName}${user.LastName ? " " + user.LastName : ""}`
               : "User"}
           </Text>
 
           {/* Role */}
-          <Text className="text-base font-semibold text-[#16A34A] opacity-90 mt-1">
+          <Text className="text-sm font-semibold text-[#16A34A] opacity-90 mt-1">
             {user?.RoleName || "Member"}
           </Text>
 
