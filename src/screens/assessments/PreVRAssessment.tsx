@@ -13,6 +13,7 @@ import Toast from 'react-native-toast-message';
 import { UserContext } from 'src/store/context/UserContext';
 import { KeyboardAvoidingView } from 'react-native';
 import { Platform } from 'react-native';
+import CustomToast from '@components/CustomToast';
 
 type Question = {
   PPVRQMID: string;
@@ -74,6 +75,48 @@ export default function PreVRAssessment() {
   const [selectedSession, setSelectedSession] = useState<string>("No session");
   const [showSessionDropdown, setShowSessionDropdown] = useState(false);
 
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastButtons, setToastButtons] = useState<
+    { text: string; onPress: () => void; style?: 'cancel' | 'default' | 'destructive' }[]
+  >([]);
+
+
+  const showContinueSessionToast = () => {
+    setToastMessage('Do you want to still continue the VR Session?');
+    setToastButtons([
+      {
+        text: 'Cancel',
+        style: 'cancel',
+        onPress: () => {
+          // Hide toast immediately
+          setToastVisible(false);
+          // Navigate after short delay to allow UI to update
+          setTimeout(() => navigation.goBack(), 100);
+        },
+      },
+      {
+        text: 'Continue',
+        onPress: () => {
+          console.log('Continue pressed');
+          setToastVisible(false);
+          setTimeout(() => {
+            console.log('Navigating to SessionSetupScreen');
+            navigation.navigate('SessionSetupScreen', {
+              patientId,
+              age,
+              studyId,
+              RandomizationId,
+              sessionNo: sessionNo || undefined,
+            });
+          }, 100);
+        },
+      },
+
+    ]);
+    setToastVisible(true);
+  };
+
   const fetchAvailableSessions = async () => {
     try {
       const response = await apiService.post<GetSessionsResponse>("/GetParticipantVRSessions", {
@@ -127,6 +170,8 @@ export default function PreVRAssessment() {
   //     console.error('Error fetching randomization ID:', error);
   //   }
   // };
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -304,36 +349,11 @@ export default function PreVRAssessment() {
 
         // Navigate based on answers
         if (hasYesAnswer) {
-          // Show confirmation popup if any answer is "Yes"
-          console.log(" Detected at least one YES answer");
-
           setTimeout(() => {
-            Alert.alert(
-              'Continue VR Session?',
-              'Do you want to still continue the VR Session?',
-              [
-                {
-                  text: 'No',
-                  onPress: () => navigation.goBack(),
-                  style: 'cancel'
-                },
-                {
-                  text: 'Yes',
-                  onPress: () => {
-                    navigation.navigate('SessionSetupScreen', {
-                      patientId,
-                      age,
-                      studyId,
-                      RandomizationId,
-                      sessionNo: sessionNo || undefined
-                    });
-                  }
-                }
-              ],
-              { cancelable: false }
-            );
+            showContinueSessionToast();
           }, 2000);
-        } else {
+        }
+        else {
           // If all answers are "No", navigate directly to VR Session Setup
           setTimeout(() => {
             navigation.navigate('SessionSetupScreen', {
@@ -388,6 +408,16 @@ export default function PreVRAssessment() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
+      {toastVisible && (
+        <CustomToast
+          message={toastMessage}
+          type="info"
+          buttons={toastButtons}
+          onDismiss={() => setToastVisible(false)}
+          duration={10000}
+        />
+      )}
+
       <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
         <View style={{
           backgroundColor: 'white',
