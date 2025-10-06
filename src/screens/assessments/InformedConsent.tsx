@@ -400,7 +400,11 @@ export default function InformedConsentForm({}: InformedConsentFormProps) {
         </FormCard>
 
         {/* Acknowledgements */}
-        <FormCard icon="C" title="Consent Acknowledgements (Initial each) *" error={!!errors.allInitialed}>
+        <FormCard icon="C" title="Consent Acknowledgements (Initial each) " 
+          error={!!errors.allInitialed}
+          required
+          >
+           
           {consentMaster.map((s, idx) => (
             <View key={s.ICMID} className="mb-3 mt-4">
               <View className="bg-white border border-[#e6eeeb] rounded-2xl p-3">
@@ -453,7 +457,9 @@ export default function InformedConsentForm({}: InformedConsentFormProps) {
                 <Text className={`text-sm font-medium ${errors.agree ? 'text-red-500' : 'text-[#0b1f1c]'}`}>
                   I agree to voluntarily take part in the above study.
                 </Text>
-                <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>*</Text>
+                <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom:0}}>
+                  *
+                </Text>
               </View>
             </View>
           </View>
@@ -655,7 +661,9 @@ export function SignatureBlock({
               <Text className={`text-md font-base mb-2 ${nameError ? 'text-red-500' : 'text-[#2c4a43]'}`}>
                 {nameLabel}
               </Text>
-              <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>*</Text>
+             <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 9 }}>
+                *
+              </Text>
             </View>
             <TextInput
               value={nameValue}
@@ -701,7 +709,9 @@ export function InvestigatorNameBlock({
         <Text className={`text-md font-medium mb-3 ${showError ? 'text-red-500' : 'text-[#2c4a43]'}`}>
           Study Investigator's Name
         </Text>
-        <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 2 }}>*</Text>
+        <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 9 }}>
+          *
+        </Text>
       </View>
 
       <TextInput

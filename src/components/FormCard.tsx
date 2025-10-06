@@ -2,11 +2,11 @@ import { PropsWithChildren, useState } from 'react';
 import { Pressable } from 'react-native';
 import { View, Text } from 'react-native';
 
-type Props = PropsWithChildren<{ icon?: string; title?: string; desc?: string; error?: boolean; }>
+type Props = PropsWithChildren<{ icon?: string; title?: string; desc?: string; error?: boolean; required?: boolean;}>
 
-const ICON_COL = 16;
+const ICON_COL = 25;
 
-export default function FormCard({ icon, title, desc, children, error }: Props) {
+export default function FormCard({ icon, title, desc, children, error,required }: Props) {
   const [checked, setChecked] = useState(false);
   return (
     <View
@@ -52,7 +52,7 @@ export default function FormCard({ icon, title, desc, children, error }: Props) 
           <Text
             className={`text-base font-semibold ${error ? "text-red-500" : "text-[#0b1f1c]"}`}
           >
-            {title}
+            {title} {required && <Text className="text-red-600 ml-1 text-sm">*</Text>}
           </Text>
           {!!desc && <Text className="text-xs text-muted mt-4 ml-[14px]">{desc}</Text>}
         </View>

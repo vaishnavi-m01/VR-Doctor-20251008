@@ -625,16 +625,7 @@ export default function PatientScreening() {
             <View className="flex-1">
 
               <Field
-                // label={
-                //   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                //     <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                //       Pulse Rate (bpm)
-                //     </Text>
-                //     <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
-                //       *
-                //     </Text>
-                //   </View>
-                // }
+               
                 label='  Pulse Rate (bpm)'
                 required
                 placeholder="76"
@@ -650,16 +641,7 @@ export default function PatientScreening() {
             <View className="flex-1">
 
               <Field
-                // label={
-                //   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                //     <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                //       Blood Pressure (mmHg)
-                //     </Text>
-                //     <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
-                //       *
-                //     </Text>
-                //   </View>
-                // }
+               
                 label= "Blood Pressure (mmHg)"
                 required
                 placeholder="120/80"
@@ -673,16 +655,7 @@ export default function PatientScreening() {
 
             <View className="flex-1">
               <Field
-                // label={
-                //   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                //     <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                //       Temperature (°C)
-                //     </Text>
-                //     <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
-                //       *
-                //     </Text>
-                //   </View>
-                // }
+              
                 label='Temperature (°C)'
                 required
                 error={errors.temperature}
@@ -697,16 +670,7 @@ export default function PatientScreening() {
 
             <View className="flex-1">
               <Field
-                // label={
-                //   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                //     <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                //       BMI
-                //     </Text>
-                //     <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
-                //       *
-                //     </Text>
-                //   </View>
-                // }
+               
                 label='BMI'
                 required
                 error={errors.bmi}
@@ -734,7 +698,7 @@ export default function PatientScreening() {
                 >
                   Any electronic implants?
                 </Text>
-                <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 2 }}>
+               <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 9 }}>
                   *
                 </Text>
               </View>
@@ -768,7 +732,7 @@ export default function PatientScreening() {
                 >
                   Any prosthetics or orthotics device?
                 </Text>
-                <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 2 }}>
+               <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 9}}>
                   *
                 </Text>
               </View>
