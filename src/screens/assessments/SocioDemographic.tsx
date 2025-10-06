@@ -507,7 +507,7 @@ export default function SocioDemographic() {
     }
     
     // TEMPORARY: Skip lifestyle validation to isolate the issue
-    newHabitErrors = {};
+    // newHabitErrors = {};
 
 
     // if (!participantSignature) {

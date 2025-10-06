@@ -1,13 +1,12 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import {  useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import FormCard from '@components/FormCard';
-import Thermometer from '@components/Thermometer';
 import { Field } from '@components/Field';
 import DateField from '@components/DateField';
 import Chip from '@components/Chip';
 import BottomBar from '@components/BottomBar';
 import { Btn } from '@components/Button';
-import { useRoute, RouteProp, useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../Navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { apiService } from 'src/services';
@@ -87,11 +86,11 @@ export default function PatientScreening() {
   const [checked, setChecked] = useState(false);
 
   // Distress Thermometer state
-  const [distressSelectedProblems, setDistressSelectedProblems] = useState<{ [key: string]: boolean }>({});
+  const [_distressSelectedProblems, setDistressSelectedProblems] = useState<{ [key: string]: boolean }>({});
 
   const [factGScore, setFactGScore] = useState<string | null>(null);
-  const [distressScore, setDistressScore] = useState<string | null>(null);
-  const [baselineLoading, setBaselineLoading] = useState<boolean>(false);
+  const [_distressScore, setDistressScore] = useState<string | null>(null);
+  const [_baselineLoading, setBaselineLoading] = useState<boolean>(false);
 
   const [showFactGForm, setShowFactGForm] = useState(false);
   const [showDistressBaselineForm, setShowDistressBaselineForm] = useState(false);
@@ -626,39 +625,43 @@ export default function PatientScreening() {
             <View className="flex-1">
 
               <Field
-                label={
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                      Pulse Rate (bpm)
-                    </Text>
-                    <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
-                      *
-                    </Text>
-                  </View>
-                }
+                // label={
+                //   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                //     <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
+                //       Pulse Rate (bpm)
+                //     </Text>
+                //     <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
+                //       *
+                //     </Text>
+                //   </View>
+                // }
+                label='  Pulse Rate (bpm)'
+                required
                 placeholder="76"
                 error={errors.pulseRate}
                 value={pulseRate}
                 onChangeText={setPulseRate}
                 keyboardType="numeric"
                 maxLength={3}
-                textAlign="right"
+                // textAlign="right"
               />
             </View>
 
             <View className="flex-1">
 
               <Field
-                label={
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                      Blood Pressure (mmHg)
-                    </Text>
-                    <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
-                      *
-                    </Text>
-                  </View>
-                }
+                // label={
+                //   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                //     <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
+                //       Blood Pressure (mmHg)
+                //     </Text>
+                //     <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
+                //       *
+                //     </Text>
+                //   </View>
+                // }
+                label= "Blood Pressure (mmHg)"
+                required
                 placeholder="120/80"
                 error={errors.bloodPressure}
                 value={bloodPressure}
@@ -670,38 +673,42 @@ export default function PatientScreening() {
 
             <View className="flex-1">
               <Field
-                label={
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                      Temperature (°C)
-                    </Text>
-                    <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
-                      *
-                    </Text>
-                  </View>
-                }
+                // label={
+                //   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                //     <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
+                //       Temperature (°C)
+                //     </Text>
+                //     <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
+                //       *
+                //     </Text>
+                //   </View>
+                // }
+                label='Temperature (°C)'
+                required
                 error={errors.temperature}
                 placeholder="36.8"
                 value={temperature}
                 onChangeText={setTemperature}
                 keyboardType="decimal-pad"
                 maxLength={5}
-                textAlign="right"
+                // textAlign="right"
               />
             </View>
 
             <View className="flex-1">
               <Field
-                label={
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
-                      BMI
-                    </Text>
-                    <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
-                      *
-                    </Text>
-                  </View>
-                }
+                // label={
+                //   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                //     <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500' }}>
+                //       BMI
+                //     </Text>
+                //     <Text style={{ color: 'red', fontSize: 14, fontWeight: '500', marginLeft: 2 }}>
+                //       *
+                //     </Text>
+                //   </View>
+                // }
+                label='BMI'
+                required
                 error={errors.bmi}
                 placeholder="22.5"
                 value={bmi}

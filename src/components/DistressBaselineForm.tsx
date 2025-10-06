@@ -44,6 +44,7 @@ interface SaveScoreRequest {
   CreatedDate: string;
   ModifiedDate: string;
   PDWSID?: string;
+  DistressTherometerScore?: number | string;
 }
 
 interface DistressBaselineFormProps {
@@ -65,7 +66,6 @@ export default function DistressBaselineForm({ closeDistressBaselineForm, onScor
   const [isDefaultForm, setIsDefaultForm] = useState(true);
   const [errors, setErrors] = useState<{ distressScore?: string; selectedProblems?: string }>({});
 
-  const navigation = useNavigation<any>();
   const { userId } = useContext(UserContext);
   const route = useRoute<RouteProp<RootStackParamList, "DistressBaselineForm">>();
   const { patientId, age, studyId } = route.params as {
@@ -144,7 +144,7 @@ export default function DistressBaselineForm({ closeDistressBaselineForm, onScor
 
       try {
         const scoreRes = await apiService.post<{ ResponseData: any[] }>(
-          "/GetParticipantDistressWeeklyScore",
+          "/GetParticipantMedicalScreening",
           {
             ParticipantId: participantId,
             StudyId: studyIdFormatted,
@@ -154,7 +154,7 @@ export default function DistressBaselineForm({ closeDistressBaselineForm, onScor
         const scoreData = scoreRes.data?.ResponseData?.[0];
         console.log("DistressBaselineForm - Score data:", scoreData);
         if (scoreData) {
-          const scaleValue = Number(scoreData.ScaleValue);
+          const scaleValue = Number(scoreData.DistressTherometerScore);
           console.log("DistressBaselineForm - Setting value to:", scaleValue);
           setV(scaleValue);
           setPDWSID(scoreData.PDWSID || null);
@@ -265,7 +265,7 @@ export default function DistressBaselineForm({ closeDistressBaselineForm, onScor
       const scoreObj: SaveScoreRequest = {
         ParticipantId: enteredPatientId,
         StudyId: studyIdFormatted,
-        ScaleValue: v.toString(),
+        DistressTherometerScore: v.toString(),
         Notes: notes || "",
         CreatedBy: userId || "UH-1000",
         ModifiedBy: userId || "UH-1000",
