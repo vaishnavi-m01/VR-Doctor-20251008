@@ -42,7 +42,7 @@ export interface Patient {
   groupType?: string;
   CriteriaStatus?: string;
   GroupTypeNumber?: string;
-  PhoneNumber?:string;
+  PhoneNumber?: string;
 }
 
 interface ParticipantRequest {
@@ -95,6 +95,9 @@ export default function ParticipantAssessmentSplit() {
 
   const [ageRangeError, setAgeRangeError] = useState<string>('');
 
+  const [cancerDiagnosesList, setCancerDiagnosesList] = useState<string[]>([]);
+
+
   // Advanced filter state
   const [advFilters, setAdvFilters] = useState<AdvancedFilters>({
     criteriaStatus: '',
@@ -102,7 +105,7 @@ export default function ParticipantAssessmentSplit() {
     ageFrom: '',
     ageTo: '',
     groupType: '',
-    cancerDiagnosis: '',     // new
+    cancerDiagnosis: '',     
     stageOfCancer: '',
   });
 
@@ -140,6 +143,25 @@ export default function ParticipantAssessmentSplit() {
     setAdvFilters(prev => ({ ...prev, stageOfCancer: value }));
   };
 
+  const fetchCancerDiagnoses = async () => {
+    try {
+      const response = await apiService.post<{ ResponseData: Array<{ CancerType: string }> }>(
+        "/GetCancerTypesData",
+        {}
+      );
+      if (response.data?.ResponseData) {
+        const diagnoses = response.data.ResponseData.map(item => item.CancerType);
+        setCancerDiagnosesList(diagnoses);
+      }
+    } catch (error) {
+      console.error('Failed to fetch cancer diagnoses:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCancerDiagnoses();
+  }, []);
+
 
   const handleClearFilters = () => {
     setAdvFilters({
@@ -154,6 +176,7 @@ export default function ParticipantAssessmentSplit() {
     setSearchText('');
     setAppliedSearchText('');
     setSelectedGroupFilter('All');
+     fetchParticipants('');
   };
 
   const [didResetFilters, setDidResetFilters] = useState(false);
@@ -177,22 +200,22 @@ export default function ParticipantAssessmentSplit() {
         // Check if we need to force refresh
         const forceRefresh = await AsyncStorage.getItem('forceRefreshParticipants');
         console.log('🔄 Force refresh flag:', forceRefresh);
-        
+
         const fetchedParticipants = await fetchParticipants(appliedSearchText);
-        
+
         // Check for newly added participant
         const newlyAdded = await AsyncStorage.getItem('newlyAddedParticipantId');
         if (newlyAdded) {
           console.log('🆕 Found newly added participant ID:', newlyAdded);
           setNewlyAddedParticipantId(newlyAdded);
-          
+
           // Convert to number for comparison
           const numericId = parseInt(newlyAdded, 10);
           if (!isNaN(numericId)) {
             // Verify the participant exists in the fetched list
             const participantExists = fetchedParticipants.some(p => p.ParticipantId === numericId);
             console.log('🔍 Participant exists in list:', participantExists);
-            
+
             if (participantExists) {
               setSelId(numericId);
               await saveSelectedParticipant(numericId);
@@ -211,7 +234,7 @@ export default function ParticipantAssessmentSplit() {
               }, 2000);
             }
           }
-          
+
           // Clear the flags after 5 seconds
           setTimeout(async () => {
             setNewlyAddedParticipantId(null);
@@ -254,23 +277,14 @@ export default function ParticipantAssessmentSplit() {
   }, []);
 
 
-  // const handleAdvancedDone = async () => {
-  //   if (!validateAgeRange()) {
-  //     return; 
-  //   }
-  //   setShowAdvancedSearch(false);
-  //   await fetchParticipants(appliedSearchText);
-  // };
-
   const handleAdvancedDone = async () => {
     if (!validateAgeRange()) {
       return;
     }
-
     setSearchText('');
     setAppliedSearchText('');
-    setSelectedGroupFilter('All');
     setShowAdvancedSearch(false);
+
     await fetchParticipants('');
   };
 
@@ -321,8 +335,8 @@ export default function ParticipantAssessmentSplit() {
     }
   };
 
-  const CANCER_DIAGNOSES = ['ovarian', 'lungs', 'breast', 'defuse Large B cell Lymphoma',];
-  const STAGES = ['i', 'ii', 'iii', 'iv'];
+  // const CANCER_DIAGNOSES = ['Bladder', 'Breast'];
+  const STAGES = ['Stage I', 'Stage II', 'Stage III', 'Stage IV'];
 
 
   // Enhanced fetch function with advanced filters updated for CriteriaStatus
@@ -344,9 +358,25 @@ export default function ParticipantAssessmentSplit() {
       if (advFilters.cancerDiagnosis?.trim()) {
         requestBody.CancerDiagnosis = advFilters.cancerDiagnosis.trim();
       }
-      if (advFilters.stageOfCancer?.trim()) {
+       if (advFilters.stageOfCancer?.trim()) {
         requestBody.StageOfCancer = advFilters.stageOfCancer.trim();
       }
+    
+      // const matchedStage = STAGES.find(stage => stage.toLowerCase() === trimmedSearch.toLowerCase());
+      // if (matchedStage) {
+      //   requestBody.StageOfCancer = matchedStage;
+      // }
+
+      const matchedStage = STAGES.find(stage => stage.toLowerCase() === trimmedSearch.toLowerCase());
+      if (matchedStage)
+        requestBody.StageOfCancer = matchedStage;
+
+      // Later in the code (conditional branches)
+      else if (STAGES.some(stage => stage.toLowerCase() === trimmedSearch.toLowerCase()) && !advFilters.stageOfCancer) {
+        const matchedStage = STAGES.find(stage => stage.toLowerCase() === trimmedSearch.toLowerCase());
+        if (matchedStage) requestBody.StageOfCancer = matchedStage;
+      }
+
       const ageFromNum = Number(advFilters.ageFrom);
       if (!isNaN(ageFromNum) && advFilters.ageFrom !== '') {
         requestBody.AgeFrom = ageFromNum;
@@ -368,11 +398,21 @@ export default function ParticipantAssessmentSplit() {
         else if ((trimmedSearch === 'study' || trimmedSearch === 'controlled') && !advFilters.groupType) {
           requestBody.GroupType = searchCap;
         }
-        else if (CANCER_DIAGNOSES.includes(trimmedSearch) && !advFilters.cancerDiagnosis) {
-          requestBody.CancerDiagnosis = searchCap;
+
+        else if (!advFilters.cancerDiagnosis) {
+          const matchedDiagnosis = cancerDiagnosesList.find(
+            diag => diag.toLowerCase() === trimmedSearch
+          );
+          if (matchedDiagnosis) {
+            requestBody.CancerDiagnosis = matchedDiagnosis;
+          }
         }
-        else if (STAGES.includes(trimmedSearch.toLowerCase()) && !advFilters.stageOfCancer) {
-          requestBody.StageOfCancer = trimmedSearch.toUpperCase();
+
+        else if (STAGES.some(stage => stage.toLowerCase() === trimmedSearch.toLowerCase()) && !advFilters.stageOfCancer) {
+          const matchedStage = STAGES.find(stage => stage.toLowerCase() === trimmedSearch.toLowerCase());
+          if (matchedStage) {
+            requestBody.StageOfCancer = matchedStage;
+          }
         }
 
         else if (/^pid-\d+$/i.test(trimmedSearch)) {
@@ -420,10 +460,10 @@ export default function ParticipantAssessmentSplit() {
             name: item.Name ?? undefined,
             groupType: item.GroupType || null,
             CriteriaStatus: item.CriteriaStatus || null,
-            GroupTypeNumber:item.GroupTypeNumber || null,
-            PhoneNumber:item.PhoneNumber || null
+            GroupTypeNumber: item.GroupTypeNumber || null,
+            PhoneNumber: item.PhoneNumber || null
           };
-          
+
           // Debug logging for specific participants
           if (item.ParticipantId === 231) {
             console.log("ParticipantAssessmentSplit - PID-231 data:", {
@@ -437,20 +477,11 @@ export default function ParticipantAssessmentSplit() {
               mappedGroupTypeType: typeof patient.groupType
             });
           }
-          
+
           return patient;
         });
         setParticipants(parsed);
-        // if (selId === null && parsed.length > 0) {
-        //   setSelId(parsed[0].ParticipantId);
-        //   await saveSelectedParticipant(parsed[0].ParticipantId);
-        // } else if (selId !== null) {
-        //   const existsSelected = parsed.some(p => p.ParticipantId === selId);
-        //   if (!existsSelected && parsed.length > 0) {
-        //     setSelId(parsed[0].ParticipantId);
-        //     await saveSelectedParticipant(parsed[0].ParticipantId);
-        //   }
-        // }
+       
         return parsed;
       }
       setParticipants([]);
@@ -603,11 +634,21 @@ export default function ParticipantAssessmentSplit() {
     saveSelectedTab(tab);
   }, [tab]);
 
-  // Function to apply search filter when user clicks search or submits input
-  const handleApplySearch = () => {
-    setAppliedSearchText(searchText.trim());
-    fetchParticipants(searchText.trim());
-  };
+ const handleApplySearch = () => {
+  // Clear advanced filters to avoid conflict with search input
+  setAdvFilters({
+    criteriaStatus: '',
+    gender: '',
+    ageFrom: '',
+    ageTo: '',
+    groupType: '',
+    cancerDiagnosis: '',
+    stageOfCancer: '',
+  });
+  setAppliedSearchText(searchText.trim());
+  fetchParticipants(searchText.trim());
+};
+
 
   // Effect to clear filters when search is cleared by user typing empty string
   useEffect(() => {
@@ -637,7 +678,7 @@ export default function ParticipantAssessmentSplit() {
     const age = sel?.age ?? 0;
     const RandomizationId = sel?.GroupTypeNumber;
     const Gender = sel?.gender;
-    const PhoneNumber= sel?.PhoneNumber
+    const PhoneNumber = sel?.PhoneNumber
 
     switch (tab) {
       case 'dash':
@@ -649,7 +690,7 @@ export default function ParticipantAssessmentSplit() {
       case 'assessment':
         return <AssessmentTab patientId={patientId} age={age} studyId={studyId} groupType={sel?.groupType} />;
       case 'vr':
-        return <VRSessionsList patientId={patientId} age={age} studyId={studyId} RandomizationId ={RandomizationId} Gender={Gender} phoneNumber={PhoneNumber}/>;
+        return <VRSessionsList patientId={patientId} age={age} studyId={studyId} RandomizationId={RandomizationId} Gender={Gender} phoneNumber={PhoneNumber} />;
       case 'notification':
         return null;
       default:
@@ -726,14 +767,14 @@ export default function ParticipantAssessmentSplit() {
                 <Pressable
                   onPress={() => setSelectedGroupFilter('All')}
                   className={`flex-1 mx-1 py-1.5 px-3 rounded-lg border ${selectedGroupFilter === 'All'
-                      ? 'bg-green-600 border-green-600'
-                      : 'bg-white border-gray-300'
+                    ? 'bg-green-600 border-green-600'
+                    : 'bg-white border-gray-300'
                     }`}
                 >
                   <Text
                     className={`text-center text-sm font-medium ${selectedGroupFilter === 'All'
-                        ? 'text-white'
-                        : 'text-gray-700'
+                      ? 'text-white'
+                      : 'text-gray-700'
                       }`}
                   >
                     All ({groupCounts.All})
@@ -742,14 +783,14 @@ export default function ParticipantAssessmentSplit() {
                 <Pressable
                   onPress={() => setSelectedGroupFilter('Study')}
                   className={`flex-1 mx-1 py-1.5 px-3 rounded-lg border ${selectedGroupFilter === 'Study'
-                      ? 'bg-green-600 border-green-600'
-                      : 'bg-[#EBF6D6] border-[#EBF6D6]'
+                    ? 'bg-green-600 border-green-600'
+                    : 'bg-[#EBF6D6] border-[#EBF6D6]'
                     }`}
                 >
                   <Text
                     className={`text-center text-sm font-medium ${selectedGroupFilter === 'Study'
-                        ? 'text-white'
-                        : 'text-gray-700'
+                      ? 'text-white'
+                      : 'text-gray-700'
                       }`}
                   >
                     Study ({groupCounts.Study})
@@ -760,14 +801,14 @@ export default function ParticipantAssessmentSplit() {
                 <Pressable
                   onPress={() => setSelectedGroupFilter('Controlled')}
                   className={`flex-1 mx-1 py-1.5 px-3 rounded-lg border ${selectedGroupFilter === 'Controlled'
-                      ? 'bg-green-600 border-green-600'
-                      : 'bg-[#FFE8DA] border-[#FFE8DA]'
+                    ? 'bg-green-600 border-green-600'
+                    : 'bg-[#FFE8DA] border-[#FFE8DA]'
                     }`}
                 >
                   <Text
                     className={`text-center text-sm font-medium ${selectedGroupFilter === 'Controlled'
-                        ? 'text-white'
-                        : 'text-gray-700'
+                      ? 'text-white'
+                      : 'text-gray-700'
                       }`}
                   >
                     Control ({groupCounts.Controlled})
@@ -776,14 +817,14 @@ export default function ParticipantAssessmentSplit() {
                 <Pressable
                   onPress={() => setSelectedGroupFilter('Unassign')}
                   className={`flex-1 mx-1 py-1.5 px-3 rounded-lg border ${selectedGroupFilter === 'Unassign'
-                      ? 'bg-green-600 border-green-600'
-                      : 'bg-[#D2EBF8] border-[#D2EBF8]'
+                    ? 'bg-green-600 border-green-600'
+                    : 'bg-[#D2EBF8] border-[#D2EBF8]'
                     }`}
                 >
                   <Text
                     className={`text-center text-sm font-medium ${selectedGroupFilter === 'Unassign'
-                        ? 'text-white'
-                        : 'text-gray-700'
+                      ? 'text-white'
+                      : 'text-gray-700'
                       }`}
                   >
                     Unassign ({groupCounts.Unassign})
@@ -837,8 +878,8 @@ export default function ParticipantAssessmentSplit() {
             ) : filteredParticipants.length > 0 ? (
               filteredParticipants.map((p) => {
                 // Compare numeric IDs
-                const isNewlyAdded = newlyAddedParticipantId !== null && 
-                                     parseInt(newlyAddedParticipantId, 10) === p.ParticipantId;
+                const isNewlyAdded = newlyAddedParticipantId !== null &&
+                  parseInt(newlyAddedParticipantId, 10) === p.ParticipantId;
                 return (
                   <ListItem
                     key={p.ParticipantId}
@@ -882,15 +923,15 @@ export default function ParticipantAssessmentSplit() {
             {(() => {
               console.log("ParticipantAssessmentSplit - Selected participant:", sel?.ParticipantId, "GroupType:", sel?.groupType, "GroupType type:", typeof sel?.groupType);
               console.log("ParticipantAssessmentSplit - Full selected participant object:", sel);
-              
+
               // Check each condition explicitly - Excluded participants should not see Study-specific tabs
               const shouldShowOrientation = sel?.groupType === 'Study' && sel?.CriteriaStatus === 'Included';
               const shouldShowAssessment = sel?.groupType !== null && sel?.CriteriaStatus === 'Included';
               const shouldShowVRSession = sel?.groupType === 'Study' && sel?.CriteriaStatus === 'Included';
-              
+
               console.log("ParticipantAssessmentSplit - Tab visibility conditions:", {
                 shouldShowOrientation,
-                shouldShowAssessment, 
+                shouldShowAssessment,
                 shouldShowVRSession,
                 groupTypeEqualsStudy: sel?.groupType === 'Study',
                 groupTypeNotEqualsNull: sel?.groupType !== null,
@@ -902,7 +943,7 @@ export default function ParticipantAssessmentSplit() {
                 groupTypeLength: sel?.groupType?.length,
                 groupTypeTrimmed: sel?.groupType?.trim()
               });
-              
+
               const tabs = [
                 { key: 'dash', label: 'Dashboard' },
                 { key: 'info', label: 'Enrollment' },
