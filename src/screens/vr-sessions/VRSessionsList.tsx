@@ -9,13 +9,14 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { apiService } from 'src/services';
 import { UserContext } from 'src/store/context/UserContext';
 import { DropdownField } from '@components/DropdownField';
+import { Alert } from 'react-native';
 
 interface VRSession {
   SessionNo: string;
   ParticipantId: string;
   StudyId: string;
   Description: string;
-  SessionType?:string;
+  SessionType?: string;
   SessionStatus: string;
   Status: number;
   CreatedBy: string;
@@ -28,25 +29,25 @@ interface VRSessionsListProps {
   patientId?: number;
   age?: number;
   studyId?: number;
-  Gender?:string;
-  phoneNumber?:string;
-  RandomizationId?:string;
+  Gender?: string;
+  phoneNumber?: string;
+  RandomizationId?: string;
 }
 
 export default function VRSessionsList(props?: VRSessionsListProps) {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<RouteProp<RootStackParamList, 'VRSessionsList'>>();
-  
+
   // Use props if available, otherwise use route params
-  const { 
-    patientId = props?.patientId || 0, 
-    age = props?.age || 0, 
-    studyId = props?.studyId || 0 ,
+  const {
+    patientId = props?.patientId || 0,
+    age = props?.age || 0,
+    studyId = props?.studyId || 0,
     RandomizationId = props?.RandomizationId || 0,
     Gender = props?.Gender || "",
-    phoneNumber=props?.phoneNumber || ""
+    phoneNumber = props?.phoneNumber || ""
   } = route.params || {};
-  
+
   console.log('🔍 VRSessionsList Debug:');
   console.log('  Props:', props);
   console.log('  Route params:', route.params);
@@ -55,6 +56,7 @@ export default function VRSessionsList(props?: VRSessionsListProps) {
   console.log('  Final studyId:', studyId);
 
   const [sessions, setSessions] = useState<VRSession[]>([]);
+  console.log("SessionStautss", sessions)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showNewSessionModal, setShowNewSessionModal] = useState(false);
@@ -119,7 +121,7 @@ export default function VRSessionsList(props?: VRSessionsListProps) {
   //     console.log('Randomization ID API response:', response.data);
   //     const data = response.data?.ResponseData;
   //     console.log('Randomization ID data:', data);
-      
+
   //     if (data && data.GroupTypeNumber) {
   //       console.log('Setting randomization ID:', data.GroupTypeNumber);
   //       setRandomizationId(data.GroupTypeNumber);
@@ -221,22 +223,79 @@ export default function VRSessionsList(props?: VRSessionsListProps) {
 
   const handleSessionPress = async (session: VRSession) => {
     try {
-      console.log(' Navigating to VR Session page for:', session.SessionNo);
-      
-      // Navigate to VR Session page with the 4 menu items
-      navigation.navigate('VRSessionPage', {
-        patientId,
-        age,
-        studyId,
-        sessionNo: session.SessionNo,
-        sessionType: session.SessionType,
-        RandomizationId,
-        Gender,
-        phoneNumber,
-        SessionStatus:session.SessionStatus,
-      });
+      console.log(' Handling session press for:', session.SessionNo);
+
+      if (session.SessionStatus === "Stopped") {
+       
+        Alert.alert(
+          "Continue Session",
+          "Do you want to continue the session?",
+          [
+            {
+              text: "No",
+              onPress: () => {
+             
+                Alert.alert(
+                  "Adverse Event",
+                  "Was there any adverse event?",
+                  [
+                    {
+                      text: "No",
+                      style: "cancel",
+                      onPress: () => console.log("No adverse event reported")
+                    },
+                    {
+                      text: "Yes",
+                      onPress: () => {
+                        // Navigate to Adverse Event Form
+                        navigation.navigate("AdverseEventForm", {
+                          patientId,
+                          age,
+                          studyId,
+                          RandomizationId
+                        });
+                      }
+                    }
+                  ],
+                  { cancelable: false }
+                );
+              }
+            },
+            {
+              text: "Yes",
+              onPress: () => {
+              
+                navigation.navigate("VRSessionPage", {
+                  patientId,
+                  age,
+                  studyId,
+                  sessionNo: session.SessionNo,
+                  sessionType: session.SessionType,
+                  RandomizationId,
+                  Gender,
+                  phoneNumber,
+                  SessionStatus: session.SessionStatus,
+                });
+              }
+            }
+          ],
+          { cancelable: false }
+        );
+      } else {
+        navigation.navigate("VRSessionPage", {
+          patientId,
+          age,
+          studyId,
+          sessionNo: session.SessionNo,
+          sessionType: session.SessionType,
+          RandomizationId,
+          Gender,
+          phoneNumber,
+          SessionStatus: session.SessionStatus,
+        });
+      }
     } catch (err) {
-      console.error(' Error navigating to VR Session page:', err);
+      console.error("❌ Error navigating to VR Session page:", err);
     }
   };
 
@@ -264,14 +323,39 @@ export default function VRSessionsList(props?: VRSessionsListProps) {
       </View>
 
       {/* New Session Button */}
-      <View className="px-4 pt-4 pb-2">
+      {/* <View className="px-4 pt-4 pb-2">
         <Btn onPress={handleNewSession} className="w-full">
           <View className="flex-row items-center justify-center">
             <MaterialIcons name="add" size={20} color="white" />
             <Text className="text-white font-semibold ml-2">New Session</Text>
           </View>
         </Btn>
+      </View> */}
+
+      <View className="px-4 pt-4 pb-2">
+        <Btn
+          onPress={handleNewSession}
+          className="w-full"
+          disabled={sessions.some(s => s.SessionStatus === "In progress")}
+        >
+          <View className="flex-row items-center justify-center">
+            {sessions.some(s => s.SessionStatus === "In progress") ? (
+              <Text className="text-white font-semibold">
+                Complete previous session first
+              </Text>
+            ) : (
+              <>
+                <MaterialIcons name="add" size={20} color="white" />
+                <Text className="text-white font-semibold ml-2">
+                  New Session
+                </Text>
+              </>
+            )}
+          </View>
+
+        </Btn>
       </View>
+
 
       {/* Sessions List */}
       <ScrollView className="flex-1 px-4 pb-4">
@@ -298,14 +382,14 @@ export default function VRSessionsList(props?: VRSessionsListProps) {
           // Show all sessions without filtering
           const filteredSessions = sessions;
           const inProgressCount = sessions.length - filteredSessions.length;
-          
+
           console.log('🔍 VRSessionsList: Empty state check:', {
             totalSessions: sessions.length,
             filteredSessions: filteredSessions.length,
             inProgressCount: inProgressCount,
             shouldShowEmpty: filteredSessions.length === 0
           });
-          
+
           if (filteredSessions.length === 0) {
             return (
               <View className="flex-1 items-center justify-center py-20">
@@ -324,70 +408,70 @@ export default function VRSessionsList(props?: VRSessionsListProps) {
           <View>
             {(() => {
               console.log('🔍 VRSessionsList: All sessions before filtering:', sessions.map(s => ({ SessionNo: s.SessionNo, SessionStatus: s.SessionStatus })));
-              
+
               // Show all sessions without filtering
               const filteredSessions = sessions;
               const inProgressCount = sessions.length - filteredSessions.length;
-              
+
               console.log('🔍 VRSessionsList: Filtering results:', {
                 totalSessions: sessions.length,
                 filteredSessions: filteredSessions.length,
                 inProgressCount: inProgressCount,
                 filteredSessionNos: filteredSessions.map(s => s.SessionNo)
               });
-              
+
               if (inProgressCount > 0) {
                 console.log(`🔍 VRSessionsList: Filtered out ${inProgressCount} "In progress" sessions`);
               }
-              
+
               return filteredSessions.map((session, _index) => (
-              <TouchableOpacity
-                key={session.SessionNo}
-                onPress={() => handleSessionPress(session)}
-                className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm mb-4"
-                activeOpacity={0.7}
-              >
-                <View className="flex-row items-start justify-between">
-                  <View className="flex-1">
-                    {/* Session Number and Status */}
-                    <View className="flex-row items-center justify-between mb-2">
-                      <Text className="text-lg font-bold text-gray-800">
-                        {session.SessionNo}
-                      </Text>
-                      <View className={`px-3 py-1 rounded-full border ${getStatusColor(session.SessionStatus)}`}>
-                        <View className="flex-row items-center">
-                          <MaterialIcons
-                            name={getStatusIcon(session.SessionStatus)}
-                            size={14}
-                            color="currentColor"
-                          />
-                          <Text className="text-xs font-medium ml-1">
-                            {session.SessionStatus}
-                          </Text>
+                <TouchableOpacity
+                  key={session.SessionNo}
+                  onPress={() => handleSessionPress(session)}
+                  className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm mb-4"
+                  activeOpacity={0.7}
+                >
+                  <View className="flex-row items-start justify-between">
+                    <View className="flex-1">
+                      {/* Session Number and Status */}
+                      <View className="flex-row items-center justify-between mb-2">
+                        <Text className="text-lg font-bold text-gray-800">
+                          {session.SessionNo}
+                        </Text>
+                        <View className={`px-3 py-1 rounded-full border ${getStatusColor(session.SessionStatus)}`}>
+                          <View className="flex-row items-center">
+                            <MaterialIcons
+                              name={getStatusIcon(session.SessionStatus)}
+                              size={14}
+                              color="currentColor"
+                            />
+                            <Text className="text-xs font-medium ml-1">
+                              {session.SessionStatus}
+                            </Text>
+                          </View>
                         </View>
+                      </View>
+
+                      {/* Description */}
+                      <Text className="text-gray-700 text-sm leading-5 mb-3">
+                        {session.Description}
+                      </Text>
+
+                      {/* Date */}
+                      <View className="flex-row items-center">
+                        <MaterialIcons name="schedule" size={16} color="#6b7280" />
+                        <Text className="text-gray-500 text-xs ml-1">
+                          {formatDate(session.CreatedDate)}
+                        </Text>
                       </View>
                     </View>
 
-                    {/* Description */}
-                    <Text className="text-gray-700 text-sm leading-5 mb-3">
-                      {session.Description}
-                    </Text>
-
-                    {/* Date */}
-                    <View className="flex-row items-center">
-                      <MaterialIcons name="schedule" size={16} color="#6b7280" />
-                      <Text className="text-gray-500 text-xs ml-1">
-                        {formatDate(session.CreatedDate)}
-                      </Text>
+                    {/* Arrow Icon */}
+                    <View className="ml-3">
+                      <MaterialIcons name="chevron-right" size={24} color="#d1d5db" />
                     </View>
                   </View>
-
-                  {/* Arrow Icon */}
-                  <View className="ml-3">
-                    <MaterialIcons name="chevron-right" size={24} color="#d1d5db" />
-                  </View>
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
               ));
             })()}
           </View>
@@ -421,11 +505,11 @@ export default function VRSessionsList(props?: VRSessionsListProps) {
 
               <DropdownField
                 // label="VR Content Type at AE"
-                value={sessionDescription}          
-                onValueChange={(val) => setSessionDescription(val)}  
+                value={sessionDescription}
+                onValueChange={(val) => setSessionDescription(val)}
                 options={[
-                  { label: "Guided imager", value: "Guided imager" },
-                  { label: "Sound healing", value: "Sound healing" },
+                  { label: "Guided Imagery", value: "Guided Imagery" },
+                  { label: "Sound Healing", value: "Sound Healing" },
                 ]}
               />
 

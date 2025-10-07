@@ -22,7 +22,7 @@ export type RootStackParamList = {
 };
   SessionSetupScreen: {patientId?: string | number | undefined,age?:number,studyId?:string | number | undefined,RandomizationId?: string | number,Gender?:string,phoneNumber?:string,sessionNo?:string};
   ParticipantInfo: { patientId: number,age:number,studyId:number };
-  SessionControlScreen: {patientId?: number,studyId?:number; age?:number,therapy?:string; backgroundMusic?:string;language?:string;session?:string,SessionNo?:string };
+  SessionControlScreen: {patientId?: string | number | undefined,age?:number,studyId?:string | number | undefined,therapy?:string; backgroundMusic?:string;language?:string;session?:string,SessionNo?:string };
   SessionCompletedScreen: {patientId?:number,SessionNo:string;};
   SocioDemographic: { patientId?: number,age?:number,studyId?:number };
   PatientScreening: { patientId: number,age:number,studyId:number };

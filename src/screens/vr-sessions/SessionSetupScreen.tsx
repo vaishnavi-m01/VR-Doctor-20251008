@@ -4,15 +4,16 @@ import Card from '../../components/Card';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../../Navigation/types';
-import {  vrTherapyApi, authService } from 'src/services';
+import { vrTherapyApi, authService } from 'src/services';
 import { UserContext } from 'src/store/context/UserContext';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 export default function SessionSetupScreen() {
   const nav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { userId } = useContext(UserContext);
-  
+
   // Debug UserContext state on iPad
   console.log("🔍 SessionSetupScreen - UserContext Debug:", {
     userId: userId,
@@ -20,7 +21,7 @@ export default function SessionSetupScreen() {
     userIdLength: userId?.length,
     timestamp: new Date().toISOString()
   });
-  const [cat, setCat] = useState('Guided imagery');
+  const [cat, setCat] = useState('Guided Imagery');
   console.log("Therapy", cat)
   const [instr, setInstr] = useState('Flute');
   console.log("backgroundMusic", instr)
@@ -29,8 +30,8 @@ export default function SessionSetupScreen() {
   const [sess, setSess] = useState('Relaxation');
 
   const route = useRoute<RouteProp<RootStackParamList, 'SessionSetupScreen'>>();
-  const { patientId , age , studyId ,RandomizationId,Gender,phoneNumber,sessionNo } = route.params || {};
-  
+  const { patientId, age, studyId, RandomizationId, Gender, phoneNumber, sessionNo } = route.params || {};
+
   // Monitor UserContext changes for iPad debugging
   useEffect(() => {
     console.log("🔄 SessionSetupScreen - UserContext changed:", {
@@ -39,7 +40,7 @@ export default function SessionSetupScreen() {
       componentMounted: true
     });
   }, [userId]);
-  
+
   console.log('🔍 SessionSetupScreen Debug:');
   console.log('  Route params:', route.params);
   console.log('  Extracted patientId:', patientId);
@@ -50,10 +51,10 @@ export default function SessionSetupScreen() {
 
   // Dynamic session options based on therapy type
   const getSessionOptions = () => {
-    if (cat === 'Guided imagery') {
+    if (cat === 'Guided Imagery') {
       return [
         'Chemotherapy',
-        'InnerHealing', 
+        'InnerHealing',
         'Radiation',
         'Relaxation',
         'Anxiety',
@@ -79,7 +80,7 @@ export default function SessionSetupScreen() {
       return [
         'Chemotherapy',
         'Inner Healing',
-        'Radiation', 
+        'Radiation',
         'Relaxation',
         'Cognitive Behavioral'
       ];
@@ -105,29 +106,29 @@ export default function SessionSetupScreen() {
       <View className="px-4 pt-4">
         <View className="bg-white border-b border-gray-200 rounded-xl p-6 shadow-sm">
           <Text className="text-lg font-bold text-gray-800 mb-4">Participant Profile</Text>
-          
+
           {/* Participant Details Grid */}
           <View className="flex-row flex-wrap gap-4">
             <View className="flex-1 min-w-[150px]">
               <Text className="text-sm text-gray-600">Participant ID</Text>
               <Text className="text-base font-semibold text-green-600">{patientId}</Text>
             </View>
-            
+
             <View className="flex-1 min-w-[150px]">
               <Text className="text-sm text-gray-600">Randomization ID</Text>
               <Text className="text-base font-semibold text-green-600">{RandomizationId || "N/A"}</Text>
             </View>
-            
+
             <View className="flex-1 min-w-[150px]">
               <Text className="text-sm text-gray-600">Age</Text>
               <Text className="text-base font-semibold text-gray-700">{age || "Not specified"}</Text>
             </View>
-            
+
             <View className="flex-1 min-w-[150px]">
               <Text className="text-sm text-gray-600">Gender</Text>
               <Text className="text-base font-semibold text-gray-700">{Gender || "Not specified"}</Text>
             </View>
-            
+
             <View className="flex-1 min-w-[150px]">
               <Text className="text-sm text-gray-600">Contact Number</Text>
               <Text className="text-base font-semibold text-gray-700">{phoneNumber || "Not specified"}</Text>
@@ -147,14 +148,14 @@ export default function SessionSetupScreen() {
               <Text className="font-bold text-base mb-4 text-gray-700">Therapy</Text>
               <View className="gap-3">
                 <Pressable
-                  onPress={() => setCat('Guided imagery')}
-                  className={`p-3 rounded-xl border-2 items-center ${cat === 'Guided imagery'
+                  onPress={() => setCat('Guided Imagery')}
+                  className={`p-3 rounded-xl border-2 items-center ${cat === 'Guided Imagery'
                     ? 'bg-green-50 border-green-500'
                     : 'bg-gray-50 border-gray-200'
                     }`}
                 >
                   <Text className="text-2xl mb-2">🧘‍♀️</Text>
-                  <Text className="font-bold text-sm text-center">Guided imagery</Text>
+                  <Text className="font-bold text-sm text-center">Guided Imagery</Text>
                   <Text className="text-xs text-gray-500 text-center">Calm & relax</Text>
                 </Pressable>
 
@@ -261,7 +262,7 @@ export default function SessionSetupScreen() {
               </View>
             </View>
 
-              <Pressable
+            {/* <Pressable
                 disabled={!ready}
                 onPress={async () => {
                     try {
@@ -453,7 +454,102 @@ export default function SessionSetupScreen() {
                   }`}
               >
                 <Text className="text-white font-bold">Start Session</Text>
-              </Pressable>
+              </Pressable> */}
+
+
+            <Pressable
+              disabled={!ready}
+              onPress={async () => {
+                Alert.alert(
+                  "How to login to VR Session",
+                  "Please confirm you are ready to start the VR session.",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                      onPress: () => console.log("User cancelled session start"),
+                    },
+                    {
+                      text: "Confirm",
+                      onPress: async () => {
+                        try {
+                          const authServiceUser = authService.getCurrentUser();
+                          const authServiceUserId = authServiceUser?.UserID;
+                          const authState = authService.getAuthState();
+
+                          let currentUserId = userId || authServiceUserId || authState.user?.UserID;
+
+                          if (!currentUserId) {
+                            try {
+                              const storedUserId = await AsyncStorage.getItem("userId");
+                              const storedUserProfile = await AsyncStorage.getItem("USER_PROFILE");
+                              if (storedUserId) currentUserId = storedUserId;
+                              else if (storedUserProfile) {
+                                const user = JSON.parse(storedUserProfile);
+                                currentUserId = user.UserID;
+                              }
+                            } catch (error) {
+                              console.error("Error reading from AsyncStorage:", error);
+                            }
+                          }
+
+                          if (!currentUserId) {
+                            Toast.show({
+                              type: "error",
+                              text1: "Authentication Error",
+                              text2: "User ID not found. Please login again.",
+                            });
+                            return;
+                          }
+
+                          if (!patientId || patientId === 0) {
+                            Toast.show({
+                              type: "error",
+                              text1: "Error",
+                              text2: "Patient ID not found. Please navigate from a valid participant.",
+                            });
+                            return;
+                          }
+
+                          console.log("Starting VR session with:", { patientId, userId: currentUserId });
+                          await vrTherapyApi.setSceneCommand({ userId: currentUserId, sceneName: vrTherapyApi.getSceneNameForTherapy(cat) });
+                          await vrTherapyApi.setTherapyParams({ userId: currentUserId, treatment: sess, language: lang, instrument: instr, isHindu: "NonHindu" });
+                          await vrTherapyApi.setSessionInfo({ ParticipantID: patientId.toString(), ParticipantName: `Participant ${patientId}`, SessionDuration: "25:00", isActive: true, userId: currentUserId, LastSession: new Date().toISOString() });
+                          await vrTherapyApi.setTherapyCommand({ userId: currentUserId, command: "play" });
+
+                          Toast.show({
+                            type: "success",
+                            text1: "VR Session Started",
+                            text2: "VR therapy parameters have been set successfully.",
+                          });
+
+                          nav.navigate("SessionControlScreen", {
+                            patientId,
+                            studyId,
+                            therapy: cat,
+                            backgroundMusic: instr,
+                            language: lang,
+                            session: sess,
+                            SessionNo: sessionNo,
+                          });
+                        } catch (error) {
+                          console.error("Error starting VR session:", error);
+                          Toast.show({
+                            type: "error",
+                            text1: "Error",
+                            text2: "Failed to start VR session. Please try again.",
+                          });
+                        }
+                      },
+                    },
+                  ],
+                  { cancelable: false }
+                );
+              }}
+              className={`px-6 py-3 rounded-xl ${ready ? "bg-green-600" : "bg-gray-300"}`}
+            >
+              <Text className="text-white font-bold">Start Session</Text>
+            </Pressable>
 
           </View>
         </Card>

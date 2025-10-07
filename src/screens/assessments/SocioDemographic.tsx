@@ -145,6 +145,7 @@ export default function SocioDemographic() {
 
 
   const [participantSignature, setParticipantSignature] = useState("");
+  console.log("ParticipantSignature",participantSignature)
   const today = new Date().toISOString().split("T")[0];
   const [consentDate, setConsentDate] = useState<string>(today);
 

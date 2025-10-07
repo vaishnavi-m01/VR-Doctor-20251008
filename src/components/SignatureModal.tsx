@@ -26,6 +26,7 @@ const SignatureModal: React.FC<SignatureModalProps> = ({
 }) => {
   console.log(`🎯 SignatureModal rendered for: ${label}`);
   console.log(`🎯 SignatureModal visible: ${visible}`);
+  console.log("signature",signatureData)
   console.log(`🎯 SignatureModal signatureData length: ${signatureData?.length || 0}`);
   const drawRef = useRef<any>(null);              // for .clear()
   const captureRef = useRef<any>(null);          // wrapper we will snapshot
