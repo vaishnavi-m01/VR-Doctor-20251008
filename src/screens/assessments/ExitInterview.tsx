@@ -281,15 +281,6 @@ export default function ExitInterview() {
         if (isEmptyString(ans)) newErrors[qid] = 'This field is required';
       }
 
-      // if (
-      //   group.QuestionText.toLowerCase().includes('reason for discontinuation') &&
-      //   Array.isArray(ans) &&
-      //   ans.includes('Other') &&
-      //   isEmptyString(otherReasonText)
-      // ) 
-      // {
-      //   newErrors.otherReasonText = 'Please specify other reason';
-      // }
     });
 
     // Controlled fields validation
@@ -303,8 +294,8 @@ export default function ExitInterview() {
     // if (isEmptyString(vrHelpful)) newErrors.vrHelpful = 'This field is required';
     // if (isEmptyString(vrChallenging)) newErrors.vrChallenging = 'This field is required';
     // if (isEmptyString(interviewerSignature)) newErrors.interviewerSignature = 'Interviewer signature is required';
-    if (isEmptyString(participantDate)) newErrors.participantDate = 'Participant date is required';
-    if (isEmptyString(interviewerDate)) newErrors.interviewerDate = 'Interviewer date is required';
+    // if (isEmptyString(participantDate)) newErrors.participantDate = 'Participant date is required';
+    // if (isEmptyString(interviewerDate)) newErrors.interviewerDate = 'Interviewer date is required';
 
     setErrors(newErrors);
 
@@ -510,9 +501,7 @@ export default function ExitInterview() {
                 <Text style={{ color: '#2c4a43', fontSize: 14, fontWeight: '500', marginBottom: 2 }}>
                   Interview Date
                 </Text>
-                 <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 0 }}>
-                  *
-                </Text>
+                
               </View>
               <DateField value={participantDate} onChange={setParticipantDate} error={errors.participantDate} />
               {errors.participantDate && <Text style={{ color: '#dc2626', fontSize: 12 }}>{errors.participantDate}</Text>}
@@ -529,7 +518,7 @@ export default function ExitInterview() {
           .map(([qid, group]) => {
             const options = group.options.map((o) => o.OptionText || '');
             return (
-              <FormCard key={qid} icon="R" title={group.QuestionText} desc="Select all that apply">
+              <FormCard key={qid} icon="R" title={group.QuestionText} >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text className="text-md font-medium text-[#2c4a43]" style={errorLabelStyle(qid)}>
                     {group.QuestionText}

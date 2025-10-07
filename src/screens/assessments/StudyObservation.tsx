@@ -149,30 +149,13 @@ const StudyObservation = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [yesNoStates, setYesNoStates] = useState<Record<string, string>>({});
-  const [resp, setResp] = useState<string>(''); // single selection for patient response
+  const [resp, setResp] = useState<string>('');
   const [observationId, setObservationId] = useState<string | null>(routeObservationId ?? null);
   const [studyIdState, setStudyIdState] = useState<string>(studyId.toString());
   const [factGScore, setFactGScore] = useState<string | null>(null);
   const [distressScore, setDistressScore] = useState<string | null>(null);
   const [baselineLoading, setBaselineLoading] = useState<boolean>(false);
   const [randomizationId, setRandomizationId] = useState("");
-
-  const [showFactGForm, setShowFactGForm] = useState(false);
-  const [showDistressBaselineForm, setShowDistressBaselineForm] = useState(false);
-
-
-  const openDistressBaselineForm = () => setShowDistressBaselineForm(true);
-  const closeDistressBaselineForm = () => setShowDistressBaselineForm(false);
-
-  //   const closeFactGModal = () => {
-  //   setShowFactGForm(false);
-  //   // Refresh baseline scores after FactG form is closed
-  //   const participantId = `${routePatientId}`;
-  //   fetchBaselineScores(participantId, `${studyId}`);
-  // };
-
-    const openFactGModal = () => setShowFactGForm(true);
-  const closeFactGModal= () => setShowFactGForm(false);
 
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -478,7 +461,7 @@ const StudyObservation = () => {
     const requiredTextFields = [
       'SOFID-1',
       'SOFID-2',
-      'SOFID-3',
+      // 'SOFID-3',
       'SOFID-4',
       'SOFID-5',
       // 'SOFID-6',
@@ -691,11 +674,9 @@ const StudyObservation = () => {
   };
 
 
-
-
   const renderTextField = (sofid: string, label: string, placeholder?: string, multiline = false) => {
     const hasError = !!fieldErrors[sofid];
-    const isRequired = ['SOFID-1', 'SOFID-2', 'SOFID-3', 'SOFID-4', 'SOFID-5'].includes(sofid);
+    const isRequired = ['SOFID-1', 'SOFID-2', 'SOFID-4', 'SOFID-5'].includes(sofid);
     
     return (
       <View key={sofid} className="mt-3">
@@ -872,94 +853,6 @@ const StudyObservation = () => {
 
           </View>
         </FormCard>
-
-        <Modal
-          visible={showFactGForm}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={closeFactGModal}
-        >
-          <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
-            <View
-              style={{
-                backgroundColor: 'white',
-                borderRadius: 16,
-                padding: 20,
-                width: '98%',
-                maxHeight: '80%',
-                elevation: 8,
-              }}
-            >
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontWeight: '600', fontSize: 16, color: '#000' }}>
-                 Fact G Baseline
-                </Text>
-
-                <Pressable
-                  onPress={closeFactGModal}
-                  style={{
-                    backgroundColor: '#f87171',
-                    borderRadius: 20,
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                  }}
-                >
-                  <Text style={{ color: 'white', fontWeight: '600' }}>Close</Text>
-                </Pressable>
-              </View>
-
-              {/* Scrollable form */}
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <FactGForm closeFactGModal={closeFactGModal}/>
-              
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
-
-         <Modal
-          visible={showDistressBaselineForm}
-          animationType="slide"
-          onRequestClose={closeDistressBaselineForm}
-          transparent={true}
-        >
-          <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
-            <View
-              style={{
-                backgroundColor: 'white',
-                borderRadius: 16,
-                padding: 20,
-                width: '98%',
-                maxHeight: '80%',
-                elevation: 8,
-              }}
-            >
-
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontWeight: '600', fontSize: 16, color: '#000' }}>
-                  Distress Thermometer Baseline
-                </Text>
-
-                <Pressable onPress={closeDistressBaselineForm}
-                  style={{
-                    backgroundColor: '#f87171',
-                    borderRadius: 20,
-                    paddingHorizontal: 12,
-                    paddingVertical: 6,
-                  }}
-                >
-                  <Text style={{ color: 'white', fontWeight: '600' }}>Close</Text>
-                </Pressable>
-              </View>
-      
-            <ScrollView showsVerticalScrollIndicator={false}> 
-               
-              <DistressBaselineForm closeDistressBaselineForm={closeDistressBaselineForm} />
-                   
-            </ScrollView>
-          </View>
-          </View>
-        </Modal>
 
         <FormCard icon="S" title="Session Details & Responses">
           {renderYesNoField('SOFID-9', 'Was the session completed?')}

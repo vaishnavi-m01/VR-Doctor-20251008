@@ -168,12 +168,12 @@ export default function InformedConsentForm({}: InformedConsentFormProps) {
     if (!hasAnyInitialed) newErrors.allInitialed = 'Please initial at least one required section';
     if (!agree) newErrors.agree = 'Please agree to the terms and conditions';
 
-    if (!signatures.coPIName?.trim()) newErrors.coPIName = 'Co-PI name is required';
-    if (!signatures.investigatorName?.trim()) newErrors.investigatorName = 'Study Investigator name is required';
-    if (!signatures.witnessName?.trim()) newErrors.witnessName = 'Witness name is required';
+    // if (!signatures.coPIName?.trim()) newErrors.coPIName = 'Co-PI name is required';
+    // if (!signatures.investigatorName?.trim()) newErrors.investigatorName = 'Study Investigator name is required';
+    // if (!signatures.witnessName?.trim()) newErrors.witnessName = 'Witness name is required';
 
-    if (!signatures.coPIDate?.trim()) newErrors.coPIDate = 'Co-PI signature date is required';
-    if (!signatures.witnessDate?.trim()) newErrors.witnessDate = 'Witness signature date is required';
+    // if (!signatures.coPIDate?.trim()) newErrors.coPIDate = 'Co-PI signature date is required';
+    // if (!signatures.witnessDate?.trim()) newErrors.witnessDate = 'Witness signature date is required';
 
     setErrors(newErrors);
 
@@ -485,7 +485,7 @@ export default function InformedConsentForm({}: InformedConsentFormProps) {
                 onChangeDate={(v) => setSig('subjectDate', v)}
               />
 
-              <SignatureBlock
+              {/* <SignatureBlock
                 title="Co-Principal Investigator Signature"
                 nameLabel="Co-PI Name"
                 nameValue={signatures.coPIName}
@@ -498,10 +498,10 @@ export default function InformedConsentForm({}: InformedConsentFormProps) {
                 onChangeSignature={(v) => setCoPISignaturePad(ensureDataUri(v))}
                 dateValue={signatures.coPIDate}
                 onChangeDate={(v) => setSig('coPIDate', v)}
-              />
+              /> */}
             </View>
 
-            <View className="flex-row space-x-4">
+            {/* <View className="flex-row space-x-4">
               <InvestigatorNameBlock
                 value={signatures.investigatorName}
                 onChange={(v) => setSig('investigatorName', v)}
@@ -522,7 +522,7 @@ export default function InformedConsentForm({}: InformedConsentFormProps) {
                 dateValue={signatures.witnessDate}
                 onChangeDate={(v) => setSig('witnessDate', v)}
               />
-            </View>
+            </View> */}
 
             <Text className="text-[12px] text-[#6b7a77] italic">
               Note: Make 2 copies of the Subject Information Sheet and Consent Form — one for the Principal

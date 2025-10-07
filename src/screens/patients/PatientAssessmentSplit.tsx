@@ -770,7 +770,7 @@ export default function ParticipantAssessmentSplit() {
                         : 'text-gray-700'
                       }`}
                   >
-                    Controlled ({groupCounts.Controlled})
+                    Control ({groupCounts.Controlled})
                   </Text>
                 </Pressable>
                 <Pressable

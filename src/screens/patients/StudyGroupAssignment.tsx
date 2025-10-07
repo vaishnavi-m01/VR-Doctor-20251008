@@ -236,10 +236,10 @@ export default function StudyGroupAssignment() {
         // Refresh the participant list after assignment
         await fetchParticipants(query);
         
-        // Navigate back to participants list to see the updated groups
-        setTimeout(() => {
-          navigation.goBack();
-        }, 1500);
+       
+        // setTimeout(() => {
+        //   navigation.goBack();
+        // }, 1500);
       } else {
         console.log('❌ Assignment failed - unexpected response');
         throw new Error('Unexpected response from server');
@@ -367,7 +367,7 @@ export default function StudyGroupAssignment() {
           <Text className="font-extrabold">{unassigned.length}</Text>
         </View>
         <View className="px-3 py-2 bg-white border border-[#e6eeeb] rounded-xl">
-          <Text className="text-xs text-gray-600">Controlled</Text>
+          <Text className="text-xs text-gray-600">Control</Text>
           <Text className="font-extrabold">{control.length}</Text>
         </View>
         <View className="px-3 py-2 bg-white border border-[#e6eeeb] rounded-xl">

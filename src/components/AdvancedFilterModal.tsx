@@ -13,7 +13,8 @@ import { DropdownField } from './DropdownField';
 import { apiService } from 'src/services';
 
 const GROUP_TYPES = ['Study', 'Controlled'];
-const CANCER_STAGES = ['I', 'II', 'III', 'IV'];
+const CANCER_STAGES = ['Stage I', 'Stage II', 'Stage III', 'Stage IV'];
+
 
 interface AdvancedFilters {
   criteriaStatus: string;
@@ -94,7 +95,7 @@ const AdvancedFilterModal: React.FC<AdvancedFilterModalProps> = ({
         if (response.data?.ResponseData) {
           const types = response.data.ResponseData.map((item: any) => ({
             label: item.CancerType,
-            value: item.CancerTypeId,
+            value: item.CancerType,
           }));
           setCancerTypes(types);
           console.log('Loaded cancer types:', types);
@@ -279,7 +280,7 @@ const handleResetAndClose = () => {
             <DropdownField
               options={[
                 { label: 'None', value: '' },
-                ...CANCER_STAGES.map(stage => ({ label: `Stage ${stage}`, value: stage }))
+                ...CANCER_STAGES.map(stage => ({ label: ` ${stage}`, value: stage }))
               ]}
               value={filters.stageOfCancer}
               onValueChange={onStageOfCancerChange}
