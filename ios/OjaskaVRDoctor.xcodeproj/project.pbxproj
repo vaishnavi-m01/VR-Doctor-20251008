@@ -468,7 +468,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ojaskalabcorp.vrdoctarapp;
 				PRODUCT_NAME = OjaskaVRDoctor;
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VRDoctorApp_Senthil;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = VrDoctorApp_AllDevices;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;

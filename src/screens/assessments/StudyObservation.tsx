@@ -796,29 +796,38 @@ const StudyObservation = () => {
               />
             </View>
 
-            {groupedFields.basic
-              .filter((f) => f.SOFID !== 'SOFID-1' && f.SOFID !== 'SOFID-2')
-              .map((f) => {
-                if (f.SOFID === 'SOFID-5') {
-                  return (
-                    <View key={f.SOFID} className="flex-1" style={{ minWidth: '45%' }}>
-                      <DropdownField
-                        label="Session Week"
-                        options={weekOptions}
-                        value={formValues['SOFID-5'] || ''}
-                        onValueChange={(val: string) => updateFormValue('SOFID-5', val)}
-                        placeholder="Select week"
-                      />
-                    </View>
-                  );
-                } else {
-                  return (
-                    <View key={f.SOFID} className="flex-1" style={{ minWidth: '45%' }}>
-                      {renderTextField(f.SOFID, f.FieldLabel)}
-                    </View>
-                  );
-                }
-              })}
+            {/* Session Week and Observer Name in same row with proper alignment */}
+            <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}>
+              <View style={{ flex: 1, marginRight: 8 }}>
+                <DropdownField
+                  label="Session Week"
+                  options={weekOptions}
+                  value={formValues['SOFID-5'] || ''}
+                  onValueChange={(val: string) => updateFormValue('SOFID-5', val)}
+                  placeholder="Select week"
+                />
+              </View>
+              
+              <View style={{ flex: 1, marginLeft: 8 }}>
+                <View key="SOFID-4">
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text
+                      className="text-sm"
+                      style={{ color: '#rgb(44 74 67)', fontWeight: '500', marginBottom: 2 }}>
+                      Observer Name
+                    </Text>
+                    <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 5 }}>
+                      *
+                    </Text>
+                  </View>
+                  <Field
+                    placeholder="Observer Name"
+                    value={formValues['SOFID-4'] || ''}
+                    onChangeText={(value) => updateFormValue('SOFID-4', value)}
+                  />
+                </View>
+              </View>
+            </View>
 
           </View>
 

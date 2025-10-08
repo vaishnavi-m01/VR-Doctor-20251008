@@ -382,61 +382,6 @@ export default function SessionControlScreen() {
               </View>
             </Card>
 
-            <Card className="p-4 mt-4">
-              <Text className="font-bold text-base mb-4 text-gray-700">Session parameters</Text>
-
-              <View className="flex-row justify-between mb-4">
-                {/* Therapy */}
-                <View className="items-center flex-1">
-                  <View className="w-12 h-12 rounded-xl bg-green-100 items-center justify-center">
-                    <Text className="text-xl">🧘‍♀️</Text>
-                  </View>
-                  <Text
-                    className="text-xs text-gray-600 mt-1"
-                    style={{ flexShrink: 1, flexWrap: 'nowrap' }}
-                  >
-                    {therapy}
-                  </Text>
-                </View>
-
-                <View className="items-center flex-1">
-                  <View className="w-12 h-12 rounded-xl bg-purple-100 items-center justify-center">
-                    <Text className="text-xl">🧪</Text>
-                  </View>
-                  <Text
-                    className="text-xs text-gray-600 mt-1"
-                    style={{ flexShrink: 1, flexWrap: 'nowrap' }}
-                  >
-                    {session}
-
-                  </Text>
-                </View>
-
-                <View className="items-center flex-1">
-                  <View className="w-12 h-12 rounded-xl bg-blue-100 items-center justify-center">
-                    <Text className="text-xl">🎵</Text>
-                  </View>
-                  <Text
-                    className="text-xs text-gray-600 mt-1"
-                    style={{ flexShrink: 1, flexWrap: 'nowrap' }}
-                  >
-                    {backgroundMusic}
-                  </Text>
-                </View>
-
-                <View className="items-center flex-1">
-                  <View className="w-12 h-12 rounded-xl bg-orange-100 items-center justify-center">
-                    <Text className="text-xl">🗣</Text>
-                  </View>
-                  <Text
-                    className="text-xs text-gray-600 mt-1"
-                    style={{ flexShrink: 1, flexWrap: 'nowrap' }}
-                  >
-                    {language}
-                  </Text>
-                </View>
-              </View>
-            </Card>
 
 
 
@@ -451,7 +396,37 @@ export default function SessionControlScreen() {
             <Card className="p-4 mb-4">
 
               {/* Video Preview */}
-              <View className="rounded-xl h-32 bg-gradient-to-b from-gray-100 to-gray-200 mb-4 items-center justify-center">
+              <View className="rounded-xl h-32 bg-gradient-to-b from-gray-100 to-gray-200 mb-4 items-center justify-center relative">
+                {/* End Session Button - Top Left */}
+                <View className="absolute top-2 left-2">
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    className="bg-red-500 rounded-full px-3 py-2 shadow-md"
+                    onPress={async () => {
+                      try {
+                        setIsPlaying(false);
+                        setCurrentTime(0);
+                        sendTherapyCommand("stop");
+
+                        const sessionStatus = {
+                          SessionNo: SessionNo,
+                          ParticipantId: patientId,
+                          SessionStatus: "Stopped",
+                          ModifiedBy: userId,
+                        };
+
+                        const sessionStatusResponse = await apiService.post("/UpdateParticipantVRSessionsStatus", sessionStatus);
+                        console.log("API response:", sessionStatusResponse?.data);
+                      } catch (error) {
+                        console.error("Error stopping session:", error);
+                      }
+                    }}>
+                    <Text className="text-white text-[12px] font-semibold text-center">
+                      End Session
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
                 <Text className="text-gray-500 mb-3">VR Session Preview</Text>
 
                 {/* Essential Media Controls */}
@@ -471,63 +446,7 @@ export default function SessionControlScreen() {
                   >
                     <Text className="text-white text-lg">{isPlaying ? "❙❙" : "▶"}</Text>
                   </Pressable>
-
-                  {/* Stop Button */}
-                  {/* <Pressable
-                    className="w-12 h-12 rounded-full items-center justify-center bg-red-500"
-                    onPress={async () => {
-                      try {
-                        setIsPlaying(false);
-                        setCurrentTime(0);
-                        sendTherapyCommand("stop");
-
-                        const sessionStatus = {
-                          SessionNo: SessionNo,
-                          ParticipantId: patientId,
-                          SessionStatus: "Stopped",
-                          ModifiedBy: userId,
-                        };
-
-                        const sessionStatusResponse = await apiService.post("/UpdateParticipantVRSessionsStatus", sessionStatus);
-                        console.log("API response:", sessionStatusResponse?.data);
-                      } catch (error) {
-                        console.error("Error stopping session:", error);
-                      }
-                    }}
-                  >
-                    <Text className="text-white text-lg">■</Text>
-                  </Pressable> */}
-
                 </View>
-              </View>
-
-              <View className="flex-1 justify-end items-center">
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  className="bg-red-500 rounded-full px-3 py-2 shadow-md"
-                  onPress={async () => {
-                    try {
-                      setIsPlaying(false);
-                      setCurrentTime(0);
-                      sendTherapyCommand("stop");
-
-                      const sessionStatus = {
-                        SessionNo: SessionNo,
-                        ParticipantId: patientId,
-                        SessionStatus: "Stopped",
-                        ModifiedBy: userId,
-                      };
-
-                      const sessionStatusResponse = await apiService.post("/UpdateParticipantVRSessionsStatus", sessionStatus);
-                      console.log("API response:", sessionStatusResponse?.data);
-                    } catch (error) {
-                      console.error("Error stopping session:", error);
-                    }
-                  }}>
-                  <Text className="text-white text-[12px] font-semibold text-center">
-                    End Session
-                  </Text>
-                </TouchableOpacity>
               </View>
 
               {/* Timeline Display */}
@@ -553,6 +472,62 @@ export default function SessionControlScreen() {
                 <View className="flex-row justify-center mt-1">
                   <Text className="text-xs text-gray-500">
                     {Math.round((currentTime / totalDuration) * 100)}% Complete
+                  </Text>
+                </View>
+              </View>
+            </Card>
+
+            {/* Session Parameters */}
+            <Card className="p-4">
+              <Text className="font-bold text-base mb-4 text-gray-700">Session parameters</Text>
+
+              <View className="flex-row justify-between mb-4">
+                {/* Therapy */}
+                <View className="items-center flex-1">
+                  <View className="w-12 h-12 rounded-xl bg-green-100 items-center justify-center">
+                    <Text className="text-xl">🧘‍♀️</Text>
+                  </View>
+                  <Text
+                    className="text-xs text-gray-600 mt-1"
+                    style={{ flexShrink: 1, flexWrap: 'nowrap' }}
+                  >
+                    {therapy}
+                  </Text>
+                </View>
+
+                <View className="items-center flex-1">
+                  <View className="w-12 h-12 rounded-xl bg-purple-100 items-center justify-center">
+                    <Text className="text-xl">🧪</Text>
+                  </View>
+                  <Text
+                    className="text-xs text-gray-600 mt-1"
+                    style={{ flexShrink: 1, flexWrap: 'nowrap' }}
+                  >
+                    {session}
+                  </Text>
+                </View>
+
+                <View className="items-center flex-1">
+                  <View className="w-12 h-12 rounded-xl bg-blue-100 items-center justify-center">
+                    <Text className="text-xl">🎵</Text>
+                  </View>
+                  <Text
+                    className="text-xs text-gray-600 mt-1"
+                    style={{ flexShrink: 1, flexWrap: 'nowrap' }}
+                  >
+                    {backgroundMusic}
+                  </Text>
+                </View>
+
+                <View className="items-center flex-1">
+                  <View className="w-12 h-12 rounded-xl bg-orange-100 items-center justify-center">
+                    <Text className="text-xl">🗣</Text>
+                  </View>
+                  <Text
+                    className="text-xs text-gray-600 mt-1"
+                    style={{ flexShrink: 1, flexWrap: 'nowrap' }}
+                  >
+                    {language}
                   </Text>
                 </View>
               </View>
