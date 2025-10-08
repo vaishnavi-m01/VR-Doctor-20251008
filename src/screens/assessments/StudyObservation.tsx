@@ -9,7 +9,7 @@ import { apiService } from 'src/services';
 import FormCard from '@components/FormCard';
 import { Field } from '@components/Field';
 import BottomBar from '@components/BottomBar';
-import Button, { Btn } from '@components/Button';
+import  { Btn } from '@components/Button';
 import Chip from '@components/Chip';
 import { PARTICIPANT_RESPONSES } from '../../constants/appConstants';
 import DateField from '@components/DateField';
@@ -17,9 +17,6 @@ import { KeyboardAvoidingView } from 'react-native';
 import { Platform } from 'react-native';
 import { formatDateDDMMYYYY } from 'src/utils/date';
 import { DropdownField } from '@components/DropdownField';
-import FactGForm from '@components/FactGForm';
-import { Modal } from 'react-native';
-import DistressBaselineForm from '@components/DistressBaselineForm';
 
 
 const STATIC_DEVICE_ID = 'DEV-001';
@@ -133,6 +130,14 @@ const formatDateTimeForApi = (isoString: string): string => {
   const mi = String(d.getMinutes()).padStart(2, '0');
   const ss = String(d.getSeconds()).padStart(2, '0');
   return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+};
+
+const formatTodayDate = (): string => {
+  const today = new Date();
+  const dd = today.getDate().toString().padStart(2, "0");
+  const mm = (today.getMonth() + 1).toString().padStart(2, "0");
+  const yyyy = today.getFullYear();
+  return `${dd}-${mm}-${yyyy}`;
 };
 
 const StudyObservation = () => {
@@ -778,7 +783,7 @@ const StudyObservation = () => {
         <FormCard icon="S" title="Study Observation - Basic Information">
 
           <View className="flex-row flex-wrap gap-x-4 gap-y-3 mt-3">
-            <View style={{ minWidth: '48%' }}>
+            <View style={{ minWidth: '49%' }}>
               <Field
                 label="Participant ID"
                 placeholder={`Participant ID: ${formValues['SOFID-2'] || ''}`}
@@ -786,17 +791,18 @@ const StudyObservation = () => {
                 editable={false}
               />
             </View>
-            <View style={{ minWidth: '45%' }}>
-              <DateField
+            <View style={{ minWidth: '48%' }}>
+              {/* <DateField
                 label="Date"
-                value={formValues['SOFID-1']?.split('T')[0] || ''}
+                // value={formValues['SOFID-1']?.split('T')[0] || ''}
+                value={formatDateDDMMYYYY(formValues['SOFID-1'])}
                 onChange={(val) => updateFormValue('SOFID-1', val)}
                 mode="date"
                 placeholder="DD-MM-YYYY"
-              />
+              /> */}
+              <DateField label="Date" value={formatTodayDate()} onChange={() => { }} />
             </View>
 
-            {/* Session Week and Observer Name in same row with proper alignment */}
             <View style={{ flexDirection: 'row', width: '100%', alignItems: 'flex-start' }}>
               <View style={{ flex: 1, marginRight: 8 }}>
                 <DropdownField

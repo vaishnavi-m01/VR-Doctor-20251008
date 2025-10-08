@@ -151,7 +151,13 @@ export default function AdverseEventForm() {
     const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
     const [loading, setLoading] = useState(false);
 
-
+    const formatTodayDate = (): string => {
+    const today = new Date();
+    const dd = today.getDate().toString().padStart(2, "0");
+    const mm = (today.getMonth() + 1).toString().padStart(2, "0");
+    const yyyy = today.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
+    };
 
 
     const [AEId, setAEId] = useState<string | null>(null);
@@ -723,14 +729,22 @@ export default function AdverseEventForm() {
             >
                 <FormCard icon="AE" title="Adverse Event">
                     <View className="flex-row gap-3 mt-4">
-                        <DateField label="Date of Report (Optional)" value={reportDate} onChange={setReportDate} />
+                      
                         <View className="flex-1"><Field
-                            label="Participant ID (Optional)"
+                            label="Participant ID"
                             placeholder="e.g., PT-0234"
                             value={String(patientId)}
                             onChangeText={setParticipantIdField}
                         />
                         </View>
+                          <DateField label="Date of Report"
+                           value={reportDate} 
+                           onChange={setReportDate} 
+                           />
+                           {/* <DateField label="Date of Report"
+                           value={formatTodayDate()} 
+                           onChange={() => { }} 
+                           /> */}
                     </View>
                     <View className="mt-4">
                         <Field
