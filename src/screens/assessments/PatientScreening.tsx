@@ -591,7 +591,7 @@ export default function PatientScreening() {
             <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
               <View
                 style={{
-                 backgroundColor: 'white',
+                  backgroundColor: 'white',
                   borderRadius: 16,
                   padding: 20,
                   width: '95%',
@@ -600,7 +600,7 @@ export default function PatientScreening() {
                   zIndex: 100,
                 }}
               >
-                    <View style={{ position: 'absolute', top: 10, left: 0, right: 0, zIndex: 999 }}>
+                <View style={{ position: 'absolute', top: 10, left: 0, right: 0, zIndex: 999 }}>
                   <Toast topOffset={10} />
                 </View>
 
@@ -623,7 +623,7 @@ export default function PatientScreening() {
                 </View>
 
                 {/* <ScrollView showsVerticalScrollIndicator={false}> */}
-                  <DistressBaselineForm closeDistressBaselineForm={closeDistressBaselineForm} onScoreCalculated={handleDistressScoreCalculated} />
+                <DistressBaselineForm closeDistressBaselineForm={closeDistressBaselineForm} onScoreCalculated={handleDistressScoreCalculated} />
                 {/* </ScrollView> */}
               </View>
 

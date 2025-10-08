@@ -35,14 +35,14 @@ export default function HomeTab() {
       title: 'Session Management',
       subtitle: 'VR session setup and control',
       route: 'SessionSetupScreen',
-      params: { patientId: 1, age: 35, studyId: 1 }
+      params: { patientId: "" }
     },
     {
       id: 'assessments',
       title: 'Assessments',
       subtitle: 'Patient evaluation forms',
       route: 'PreVR',
-      params: { patientId: 'PID-3', studyId: 'CS-0001', age: 35 }
+      params: { patientId: '', studyId: 'CS-0001' }
     }
   ];
 

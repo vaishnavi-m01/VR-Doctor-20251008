@@ -74,23 +74,29 @@ export default function PreVR() {
   };
 
   useEffect(() => {
-    if (patientId && studyId !== undefined && studyId !== null) {
-      const pid = patientId.toString();
-      const sid = studyId.toString();
-      setParticipantId(pid);
-      fetchAssessmentQuestions(pid, sid);
+    const pid = patientId ? patientId.toString() : undefined;
+    const sid = studyId ? studyId.toString() : undefined;
+
+    setParticipantId(pid || "");
+
+    fetchAssessmentQuestions(pid, sid);
+
+    if (pid) {
       fetchRandomizationId(pid);
     }
   }, [patientId, studyId]);
 
-  const fetchAssessmentQuestions = async (participantIdParam: string, studyIdParam: string) => {
+
+  console.log("preVrAssesmentOutside")
+  const fetchAssessmentQuestions = async (participantIdParam?: string, studyIdParam?: string) => {
+    console.log("preVRAssessmentApi")
     try {
       setLoading(true);
       setError(null);
-      const formattedStudyId = formatStudyId(studyIdParam);
+      const formattedStudyId = formatStudyId(studyIdParam || "CS-0001");
 
       const response = await apiService.post<ApiResponse>('/GetParticipantMainPrePostVRAssessment', {
-        ParticipantId: participantIdParam,
+        ParticipantId: participantIdParam || "",
         StudyId: "CS-0001",
       });
 
@@ -156,7 +162,7 @@ export default function PreVR() {
       console.log('Randomization ID API response:', response.data);
       const data = response.data?.ResponseData;
       console.log('Randomization ID data:', data);
-      
+
       if (data && data.GroupTypeNumber) {
         console.log('Setting randomization ID:', data.GroupTypeNumber);
         setRandomizationId(data.GroupTypeNumber);
@@ -191,13 +197,13 @@ export default function PreVR() {
     });
 
     setValidationErrors((prev) => {
-    if (prev[questionId]) {
-      const newErrors = { ...prev };
-      delete newErrors[questionId];
-      return newErrors;
-    }
-    return prev;
-  });
+      if (prev[questionId]) {
+        const newErrors = { ...prev };
+        delete newErrors[questionId];
+        return newErrors;
+      }
+      return prev;
+    });
   };
 
   const getQuestionType = (question: string): string => {
@@ -237,14 +243,12 @@ export default function PreVR() {
             <React.Fragment key={v}>
               <Pressable
                 onPress={() => setResponse(questionId, v.toString(), false, index)}
-                className={`flex-1 py-3 items-center justify-center ${
-                  value?.toString() === v.toString() ? 'bg-[#4FC264]' : 'bg-white'
-                }`}
+                className={`flex-1 py-3 items-center justify-center ${value?.toString() === v.toString() ? 'bg-[#4FC264]' : 'bg-white'
+                  }`}
               >
                 <Text
-                  className={`font-medium text-sm ${
-                    value?.toString() === v.toString() ? 'text-white' : 'text-[#4b5f5a]'
-                  }`}
+                  className={`font-medium text-sm ${value?.toString() === v.toString() ? 'text-white' : 'text-[#4b5f5a]'
+                    }`}
                 >
                   {v}
                 </Text>
@@ -263,9 +267,8 @@ export default function PreVR() {
       <View className="flex-row gap-2">
         <Pressable
           onPress={() => setResponse(questionId, 'Yes', false, index)}
-          className={`w-1/2 flex-row items-center justify-center rounded-full py-3 px-2 ${
-            value === 'Yes' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
-          }`}
+          className={`w-1/2 flex-row items-center justify-center rounded-full py-3 px-2 ${value === 'Yes' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
+            }`}
         >
           <Text className={`font-medium text-sm ${value === 'Yes' ? 'text-white' : 'text-[#2c4a43]'}`}>
             Yes
@@ -273,9 +276,8 @@ export default function PreVR() {
         </Pressable>
         <Pressable
           onPress={() => setResponse(questionId, 'No', false, index)}
-          className={`w-1/2 flex-row items-center justify-center rounded-full py-3 px-2 ${
-            value === 'No' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
-          }`}
+          className={`w-1/2 flex-row items-center justify-center rounded-full py-3 px-2 ${value === 'No' ? 'bg-[#4FC264]' : 'bg-[#EBF6D6]'
+            }`}
         >
           <Text className={`font-medium text-sm ${value === 'No' ? 'text-white' : 'text-[#2c4a43]'}`}>No</Text>
         </Pressable>
@@ -292,14 +294,12 @@ export default function PreVR() {
             <React.Fragment key={option}>
               <Pressable
                 onPress={() => setResponse(questionId, option, false, index)}
-                className={`flex-1 py-3 items-center justify-center ${
-                  value === option ? 'bg-[#4FC264]' : 'bg-white'
-                }`}
+                className={`flex-1 py-3 items-center justify-center ${value === option ? 'bg-[#4FC264]' : 'bg-white'
+                  }`}
               >
                 <Text
-                  className={`font-medium text-sm text-center ${
-                    value === option ? 'text-white' : 'text-[#4b5f5a]'
-                  }`}
+                  className={`font-medium text-sm text-center ${value === option ? 'text-white' : 'text-[#4b5f5a]'
+                    }`}
                 >
                   {option}
                 </Text>
@@ -318,7 +318,7 @@ export default function PreVR() {
     // For now render only first response index (index=0)
     const index = 0;
 
-    const hasError = validationErrors[questionId]; 
+    const hasError = validationErrors[questionId];
 
     const scaleValue = responses[questionId]?.[index]?.ScaleValue || '';
     const notesValue = responses[questionId]?.[index]?.Notes || '';
@@ -327,9 +327,8 @@ export default function PreVR() {
       <View key={questionId} className="mt-3">
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
-            className={`text-md font-medium text-[#2c4a43] mb-2 ${
-              hasError ? 'text-red-600 font-semibold' : 'text-[#4b5f5a]'
-            }`}
+            className={`text-md font-medium text-[#2c4a43] mb-2 ${hasError ? 'text-red-600 font-semibold' : 'text-[#4b5f5a]'
+              }`}
           >
             {question.AssessmentTitle}
           </Text>
@@ -412,44 +411,44 @@ export default function PreVR() {
   };
 
   const handleValidate = () => {
-     
+
     const passed = validateResponses();
 
     if (passed) {
       Toast.show
-      ({
-        type: 'success', 
-        text1: 'Validation Passed',
-        text2: 'All required fields are filled',
-        position: 'top', topOffset: 50
-      });
+        ({
+          type: 'success',
+          text1: 'Validation Passed',
+          text2: 'All required fields are filled',
+          position: 'top', topOffset: 50
+        });
     } else {
       Toast.show
-      ({ 
-        type: 'error',
-        text1: 'Validation Error',
-        text2: 'Please fill all required fields.', 
-        position: 'top',
-        topOffset: 50 
-      });
+        ({
+          type: 'error',
+          text1: 'Validation Error',
+          text2: 'Please fill all required fields.',
+          position: 'top',
+          topOffset: 50
+        });
     }
   };
 
   const handleSave = async () => {
-    
-      const passedValidation = validateResponses();
 
-      if (!passedValidation) {
-        Toast.show
-          ({ 
-            type: 'error',
-            text1: 'Validation Error',
-            text2: 'All fields are required to save.',
-            position: 'top', 
-            topOffset: 50 
-          });
-        return;
-      }
+    const passedValidation = validateResponses();
+
+    if (!passedValidation) {
+      Toast.show
+        ({
+          type: 'error',
+          text1: 'Validation Error',
+          text2: 'All fields are required to save.',
+          position: 'top',
+          topOffset: 50
+        });
+      return;
+    }
 
     try {
       setSaving(true);
@@ -500,7 +499,7 @@ export default function PreVR() {
           visibilityTime: 1000,
           onHide: () => navigation.goBack(),
         });
-        
+
       } else {
         Toast.show({
           type: 'error',
@@ -540,17 +539,17 @@ export default function PreVR() {
   }
 
   return (
-      <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-        >
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+    >
       {/* Header */}
       <View
         className="px-4"
         style={{ paddingTop: 8, paddingBottom: '0.25rem' }}
       >
-          <View className="bg-white border-b-2 border-gray-300 rounded-xl p-6 flex-row justify-between items-center shadow-sm">
+        <View className="bg-white border-b-2 border-gray-300 rounded-xl p-6 flex-row justify-between items-center shadow-sm">
           <Text className="text-lg font-bold text-green-600">Participant ID: {participantId}</Text>
           <Text className="text-base font-semibold text-green-600">
             Randomization ID: {randomizationId || "N/A"}
