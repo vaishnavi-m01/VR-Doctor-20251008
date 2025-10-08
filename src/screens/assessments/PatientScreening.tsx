@@ -270,6 +270,18 @@ export default function PatientScreening() {
     fetchData();
   }, []);
 
+  const toggleChecked = () => {
+    console.log('Checkbox toggled. Old checked:', checked);
+    setChecked(!checked);
+  };
+
+  const onChipChange = (selected: string[]) => {
+    console.log('Chip selection changed:', selected);
+    setConds(selected);
+    if (errors.conds && selected.length > 0) {
+      setErrors((prev) => ({ ...prev, conds: "" }));
+    }
+  };
 
   const handleBloodPressureChange = (text: string) => {
     let clean = text.replace(/[^0-9]/g, ""); // digits only
@@ -318,8 +330,6 @@ export default function PatientScreening() {
     //   newErrors.factGScore = "";
     // }
 
-
-
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length > 0) {
@@ -343,8 +353,6 @@ export default function PatientScreening() {
 
     return true;
   };
-
-
 
   const handleClear = () => {
     setDt(0);
@@ -444,8 +452,6 @@ export default function PatientScreening() {
     console.log('Fact-G Score Calculated:', score);
     setFactGScore(score.toString());
   };
-
-
 
 
   return (
@@ -694,7 +700,6 @@ export default function PatientScreening() {
 
             </View>
 
-
           </View>
         </FormCard>
 
@@ -731,8 +736,6 @@ export default function PatientScreening() {
                 </Pressable>
               </View>
             </View>
-
-
 
             <View className="flex-1">
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -782,7 +785,7 @@ export default function PatientScreening() {
           {/* Title row with checkbox */}
           <View className="flex-row items-center mb-2">
             <Pressable
-              onPress={() => setChecked(!checked)}
+              onPress={toggleChecked}
               style={{
                 width: 28,
                 height: 28,
@@ -807,23 +810,14 @@ export default function PatientScreening() {
             <Chip
               items={clinicalChecklist.map((item) => item.ExeperiencType)}
               value={conds}
-              onChange={(selected) => {
-                setConds(selected);
-                if (errors.conds && selected.length > 0) {
-                  setErrors((prev) => ({ ...prev, conds: "" }));
-                }
-              }}
+              onChange={onChipChange}
             />
           </View>
 
           <View style={{ height: 150 }} />
         </View>
 
-
-
-
         {/* </FormCard> */}
-
 
       </ScrollView>
 
