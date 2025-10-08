@@ -737,14 +737,14 @@ export default function AdverseEventForm() {
                             onChangeText={setParticipantIdField}
                         />
                         </View>
-                          <DateField label="Date of Report"
+                          {/* <DateField label="Date of Report"
                            value={reportDate} 
                            onChange={setReportDate} 
-                           />
-                           {/* <DateField label="Date of Report"
+                           /> */}
+                           <DateField label="Date of Report"
                            value={formatTodayDate()} 
                            onChange={() => { }} 
-                           /> */}
+                           />
                     </View>
                     <View className="mt-4">
                         <Field
