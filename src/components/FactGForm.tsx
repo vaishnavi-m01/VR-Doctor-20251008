@@ -105,7 +105,7 @@ const calculateSubscaleScore = (
 
   items.forEach((item) => {
     const response = answers[item.code];
-    const itemScore = calculateItemScore(response, item.TypeOfQuestion); 
+    const itemScore = calculateItemScore(response, item.TypeOfQuestion);
     if (itemScore !== null) {
       answeredScores.push(itemScore);
     }
@@ -146,7 +146,7 @@ interface FactGFormProps {
 
 
 
-  export default function FactGForm({ closeFactGModal, onScoreCalculated }: FactGFormProps) {
+export default function FactGForm({ closeFactGModal, onScoreCalculated }: FactGFormProps) {
   const [answers, setAnswers] = useState<Record<string, number | null>>({});
   const [subscales, setSubscales] = useState<Subscale[]>([]);
   const [loading, setLoading] = useState(false);
@@ -175,119 +175,119 @@ interface FactGFormProps {
     });
   };
 
-    const subscaleScoreMap: Record<string, number> = {
+  const subscaleScoreMap: Record<string, number> = {
     "Physical well-being": score.PWB,
     "Social/Family well-being": score.SWB,
     "Emotional well-being": score.EWB,
     "Functional well-being": score.FWB,
   };
- 
+
 
   const fetchFactG = async () => {
-  try {
-    setLoading(true);
-    setError(null);
-    setSubscales([]);
-    setAnswers({});
-
-    const participantId = `${patientId}`;
-    const studyIdFormatted = studyId ? `${studyId}` : "CS-0001";
-
-    const payload: any = {
-      StudyId: studyIdFormatted,
-      ParticipantId: participantId,
-    };
-
-    const response = await apiService.post<FactGResponse>(
-      "/getParticipantFactGQuestionBaseline",
-      payload
-    );
-
-    const questions = response.data?.ResponseData ?? [];
-
-    if (questions.length === 0) {
-      setError("No FACT-G questions found. Please try again.");
+    try {
+      setLoading(true);
+      setError(null);
       setSubscales([]);
       setAnswers({});
-      return;
-    }
 
-    // Group questions by category:
-    const grouped: Record<string, Subscale> = {};
+      const participantId = `${patientId}`;
+      const studyIdFormatted = studyId ? `${studyId}` : "CS-0001";
 
-    questions.forEach((q) => {
-      const catName = q.FactGCategoryName;
-      if (!grouped[catName]) {
-        grouped[catName] = {
-          key: catName,
-          label: catName,
-          shortCode: categoryCodeMapping[catName] || catName.charAt(0),
-          items: [],
-        };
-      }
+      const payload: any = {
+        StudyId: studyIdFormatted,
+        ParticipantId: participantId,
+      };
 
-      // Avoid duplicates
-      const alreadyExists = grouped[catName].items.some(
-        (item) => item.code === q.FactGQuestionId
+      const response = await apiService.post<FactGResponse>(
+        "/getParticipantFactGQuestionBaseline",
+        payload
       );
-      if (!alreadyExists) {
-        grouped[catName].items.push({
-          code: q.FactGQuestionId,
-          text: q.FactGQuestion,
-          FactGCategoryId: q.FactGCategoryId,
-          TypeOfQuestion: q.TypeOfQuestion,
-          value: q.ScaleValue || undefined,
-        });
+
+      const questions = response.data?.ResponseData ?? [];
+
+      if (questions.length === 0) {
+        setError("No FACT-G questions found. Please try again.");
+        setSubscales([]);
+        setAnswers({});
+        return;
       }
-    });
 
-    const categoryOrder = [
-      "Physical well-being",
-      "Social/Family well-being",
-      "Emotional well-being",
-      "Functional well-being",
-    ];
+      // Group questions by category:
+      const grouped: Record<string, Subscale> = {};
 
-    const orderedSubscales = categoryOrder
-      .filter((cat) => grouped[cat])
-      .map((cat) => {
-        grouped[cat].items.sort((a, b) => a.code.localeCompare(b.code));
-        return grouped[cat];
+      questions.forEach((q) => {
+        const catName = q.FactGCategoryName;
+        if (!grouped[catName]) {
+          grouped[catName] = {
+            key: catName,
+            label: catName,
+            shortCode: categoryCodeMapping[catName] || catName.charAt(0),
+            items: [],
+          };
+        }
+
+        // Avoid duplicates
+        const alreadyExists = grouped[catName].items.some(
+          (item) => item.code === q.FactGQuestionId
+        );
+        if (!alreadyExists) {
+          grouped[catName].items.push({
+            code: q.FactGQuestionId,
+            text: q.FactGQuestion,
+            FactGCategoryId: q.FactGCategoryId,
+            TypeOfQuestion: q.TypeOfQuestion,
+            value: q.ScaleValue || undefined,
+          });
+        }
       });
 
-    setSubscales(orderedSubscales);
+      const categoryOrder = [
+        "Physical well-being",
+        "Social/Family well-being",
+        "Emotional well-being",
+        "Functional well-being",
+      ];
 
-    const existingAnswers: Record<string, number | null> = {};
-    questions.forEach((q) => {
-      let val: number | null = null;
-      if (
-        q.ScaleValue !== null &&
-        q.ScaleValue !== undefined &&
-        q.ScaleValue !== "x"
-      ) {
-        val = parseInt(q.ScaleValue, 10);
-        if (isNaN(val)) val = null;
-      }
-      existingAnswers[q.FactGQuestionId] = val;
-      console.log(
-        `QuestionId: ${q.FactGQuestionId}, ScaleValue: ${q.ScaleValue}, Parsed: ${val}`
-      );
-    });
-    setAnswers(existingAnswers);
-  } catch (err) {
-    console.error("Failed to fetch FACT-G questions:", err);
-    setError("Failed to load FACT-G questions. Please try again.");
-    setSubscales([]);
-    setAnswers({});
-    Toast.show({
-      type: "error",
-      text1: "Error",
-      text2: "Failed to load FACT-G assessment data",
-    });
-  } finally {
-    setLoading(false);
-  }
-};
+      const orderedSubscales = categoryOrder
+        .filter((cat) => grouped[cat])
+        .map((cat) => {
+          grouped[cat].items.sort((a, b) => a.code.localeCompare(b.code));
+          return grouped[cat];
+        });
+
+      setSubscales(orderedSubscales);
+
+      const existingAnswers: Record<string, number | null> = {};
+      questions.forEach((q) => {
+        let val: number | null = null;
+        if (
+          q.ScaleValue !== null &&
+          q.ScaleValue !== undefined &&
+          q.ScaleValue !== "x"
+        ) {
+          val = parseInt(q.ScaleValue, 10);
+          if (isNaN(val)) val = null;
+        }
+        existingAnswers[q.FactGQuestionId] = val;
+        console.log(
+          `QuestionId: ${q.FactGQuestionId}, ScaleValue: ${q.ScaleValue}, Parsed: ${val}`
+        );
+      });
+      setAnswers(existingAnswers);
+    } catch (err) {
+      console.error("Failed to fetch FACT-G questions:", err);
+      setError("Failed to load FACT-G questions. Please try again.");
+      setSubscales([]);
+      setAnswers({});
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Failed to load FACT-G assessment data",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   useEffect(() => {
@@ -302,8 +302,8 @@ interface FactGFormProps {
         type: "error",
         text1: "Validation Error",
         text2: "No responses entered. Please fill at least one question.",
-        position: "top",
-        topOffset: 50,
+        // position: "top",
+        // topOffset: 50,
       });
       setFieldErrors(() => {
         const errors: Record<string, boolean> = {};
@@ -361,20 +361,20 @@ interface FactGFormProps {
         if (onScoreCalculated) {
           onScoreCalculated(score.TOTAL);
         }
-        
+
         Toast.show({
           type: "success",
           text1: "Saved Successfully",
           text2: "FactG form saved successfully!",
-          position: "top",
-          topOffset: 50,
+          // position: "top",
+          // topOffset: 50,
           visibilityTime: 1000,
-       
-         onHide: () => {
-        closeFactGModal(); 
-      
-      }
-     });
+
+          onHide: () => {
+            closeFactGModal();
+
+          }
+        });
       } else {
         throw new Error(`Server returned status ${response.status}`);
       }
@@ -391,7 +391,7 @@ interface FactGFormProps {
     }
   };
 
-    const handleClear = () => {
+  const handleClear = () => {
     setAnswers({});
     // setSelectedDate("");
     // setSubscales([]);
@@ -399,7 +399,7 @@ interface FactGFormProps {
     setFieldErrors({});
   };
 
-  
+
 
   const RatingButtons = ({
     questionCode,
@@ -470,14 +470,14 @@ interface FactGFormProps {
         >
           <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <View style={{ 
-                backgroundColor: "#059669", 
-                borderRadius: 20, 
-                width: 40, 
-                height: 40, 
-                justifyContent: "center", 
+              <View style={{
+                backgroundColor: "#059669",
+                borderRadius: 20,
+                width: 40,
+                height: 40,
+                justifyContent: "center",
                 alignItems: "center",
-                marginRight: 12 
+                marginRight: 12
               }}>
                 <Text style={{ color: "white", fontWeight: "700", fontSize: 16 }}>F</Text>
               </View>
@@ -491,10 +491,10 @@ interface FactGFormProps {
               </View>
             </View>
           </View>
-          
-          <View style={{ 
-            flexDirection: "row", 
-            justifyContent: "space-between", 
+
+          <View style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
             alignItems: "center",
             paddingTop: 12,
             borderTopWidth: 1,
@@ -502,7 +502,7 @@ interface FactGFormProps {
           }}>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ color: "#374151", fontWeight: "600", fontSize: 16 }}>
-                Participant: 
+                Participant:
               </Text>
               <Text style={{ color: "#059669", fontWeight: "700", fontSize: 16, marginLeft: 4 }}>
                 {patientId ?? "N/A"}
@@ -510,7 +510,7 @@ interface FactGFormProps {
             </View>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ color: "#374151", fontWeight: "600", fontSize: 16 }}>
-                Study: 
+                Study:
               </Text>
               <Text style={{ color: "#059669", fontWeight: "700", fontSize: 16, marginLeft: 4 }}>
                 {studyId ? `${studyId}` : "CS-0001"}
@@ -518,7 +518,7 @@ interface FactGFormProps {
             </View>
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text style={{ color: "#374151", fontWeight: "600", fontSize: 16 }}>
-                Age: 
+                Age:
               </Text>
               <Text style={{ color: "#059669", fontWeight: "700", fontSize: 16, marginLeft: 4 }}>
                 {age || "N/A"}
@@ -528,21 +528,24 @@ interface FactGFormProps {
         </View>
       </View>
 
+
+      <FormCard icon="F" title="Fact G">
+        <View style={{ flexDirection: "row", gap: 12, marginTop: 6 }}>
+          <View style={{ flex: 1 }}>
+            <Field label="Participant ID" placeholder={`Participant ID: ${patientId ?? "N/A"}`} value={`${patientId ?? ""}`} editable={false} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <DateField label="Date" value={selectedDate} onChange={setSelectedDate} mode="date" placeholder="DD-MM-YYYY" />
+          </View>
+        </View>
+      </FormCard>
+
       <ScrollView
         style={{ flex: 1, paddingTop: 5, paddingHorizontal: 0, paddingBottom: 120 }}
         keyboardShouldPersistTaps="handled"
-      >
-        <FormCard icon="F" title="Fact G">
-          <View style={{ flexDirection: "row", gap: 12, marginTop: 6 }}>
-            <View style={{ flex: 1 }}>
-              <Field label="Participant ID" placeholder={`Participant ID: ${patientId ?? "N/A"}`} value={`${patientId ?? ""}`} editable={false} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <DateField label="Date" value={selectedDate} onChange={setSelectedDate} mode="date" placeholder="DD-MM-YYYY" />
-            </View>
-          </View>
-        </FormCard>
+        showsVerticalScrollIndicator={false}
 
+      >
         <FormCard
           icon="FG"
           title={`FACT-G (Version 4)${selectedDate ? ` - ${selectedDate}` : ""}`}

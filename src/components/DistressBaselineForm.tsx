@@ -404,6 +404,8 @@ export default function DistressBaselineForm({ closeDistressBaselineForm, onScor
         <ScrollView
           style={{ flex: 1, padding: 16, backgroundColor: "#f9fafb" }}
           keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+
         >
           <FormCard icon="DT" title="Distress Thermometer">
             <Text style={{ fontWeight: "700", fontSize: 16, marginBottom: 12 }}>

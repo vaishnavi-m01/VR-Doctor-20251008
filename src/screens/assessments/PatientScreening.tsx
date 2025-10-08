@@ -1,4 +1,4 @@
-import {  useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView, Pressable } from 'react-native';
 import FormCard from '@components/FormCard';
 import { Field } from '@components/Field';
@@ -208,10 +208,10 @@ export default function PatientScreening() {
     }
   };
 
-    // useEffect(() => {
-    //   const participantId = `${routePatientId}`;
-    //   fetchBaselineScores(patientId, `${studyId}`);
-    // }, [routePatientId, studyId, routeObservationId]);
+  // useEffect(() => {
+  //   const participantId = `${routePatientId}`;
+  //   fetchBaselineScores(patientId, `${studyId}`);
+  // }, [routePatientId, studyId, routeObservationId]);
 
   useEffect(() => {
     if (patientId && studyId) {
@@ -545,11 +545,16 @@ export default function PatientScreening() {
                   backgroundColor: 'white',
                   borderRadius: 16,
                   padding: 20,
-                  width: '98%',
-                  maxHeight: '80%',
+                  width: '95%',
+                  maxHeight: '90%',
                   elevation: 8,
+                  zIndex: 100,
                 }}
               >
+                <View style={{ position: 'absolute', top: 10, left: 0, right: 0, zIndex: 999 }}>
+                  <Toast topOffset={10} />
+                </View>
+
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Text style={{ fontWeight: '600', fontSize: 16, color: '#000' }}>
@@ -569,9 +574,9 @@ export default function PatientScreening() {
                 </View>
 
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  <FactGForm closeFactGModal={closeFactGModal} onScoreCalculated={handleFactGScoreCalculated} />
-                </ScrollView>
+                {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+                <FactGForm closeFactGModal={closeFactGModal} onScoreCalculated={handleFactGScoreCalculated} />
+                {/* </ScrollView> */}
 
               </View>
             </View>
@@ -586,22 +591,27 @@ export default function PatientScreening() {
             <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
               <View
                 style={{
-                  backgroundColor: 'white',
+                 backgroundColor: 'white',
                   borderRadius: 16,
                   padding: 20,
-                  width: '98%',
-                  maxHeight: '80%',
+                  width: '95%',
+                  maxHeight: '90%',
                   elevation: 8,
+                  zIndex: 100,
                 }}
               >
+                    <View style={{ position: 'absolute', top: 10, left: 0, right: 0, zIndex: 999 }}>
+                  <Toast topOffset={10} />
+                </View>
+
 
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <Text style={{ fontWeight: '600', fontSize: 16, color: '#000' }}>
                     Distress Thermometer Baseline
                   </Text>
-                  
+
                   <Pressable onPress={closeDistressBaselineForm}
-                   style={{
+                    style={{
                       backgroundColor: '#f87171',
                       borderRadius: 20,
                       paddingHorizontal: 12,
@@ -612,9 +622,9 @@ export default function PatientScreening() {
                   </Pressable>
                 </View>
 
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <DistressBaselineForm closeDistressBaselineForm={closeDistressBaselineForm} onScoreCalculated={handleDistressScoreCalculated} />
-                </ScrollView>
+                {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+                  <DistressBaselineForm closeDistressBaselineForm={closeDistressBaselineForm} onScoreCalculated={handleDistressScoreCalculated} />
+                {/* </ScrollView> */}
               </View>
 
             </View>
@@ -625,7 +635,7 @@ export default function PatientScreening() {
             <View className="flex-1">
 
               <Field
-               
+
                 label='  Pulse Rate (bpm)'
                 required
                 placeholder="76"
@@ -634,15 +644,15 @@ export default function PatientScreening() {
                 onChangeText={setPulseRate}
                 keyboardType="numeric"
                 maxLength={3}
-                // textAlign="right"
+              // textAlign="right"
               />
             </View>
 
             <View className="flex-1">
 
               <Field
-               
-                label= "Blood Pressure (mmHg)"
+
+                label="Blood Pressure (mmHg)"
                 required
                 placeholder="120/80"
                 error={errors.bloodPressure}
@@ -655,7 +665,7 @@ export default function PatientScreening() {
 
             <View className="flex-1">
               <Field
-              
+
                 label='Temperature (°C)'
                 required
                 error={errors.temperature}
@@ -664,13 +674,13 @@ export default function PatientScreening() {
                 onChangeText={setTemperature}
                 keyboardType="decimal-pad"
                 maxLength={5}
-                // textAlign="right"
+              // textAlign="right"
               />
             </View>
 
             <View className="flex-1">
               <Field
-               
+
                 label='BMI'
                 required
                 error={errors.bmi}
@@ -698,7 +708,7 @@ export default function PatientScreening() {
                 >
                   Any electronic implants?
                 </Text>
-               <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 9 }}>
+                <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 9 }}>
                   *
                 </Text>
               </View>
@@ -732,7 +742,7 @@ export default function PatientScreening() {
                 >
                   Any prosthetics or orthotics device?
                 </Text>
-               <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 9}}>
+                <Text style={{ color: 'red', fontSize: 16, fontWeight: '500', marginLeft: 5, marginBottom: 9 }}>
                   *
                 </Text>
               </View>
