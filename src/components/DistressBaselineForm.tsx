@@ -37,8 +37,8 @@ interface SaveScoreResponse {
 interface SaveScoreRequest {
   ParticipantId: string;
   StudyId: string;
-  ScaleValue: string;
-  Notes: string;
+  ScaleValue?: string;
+  Notes?: string;
   CreatedBy: string;
   ModifiedBy: string | null;
   CreatedDate: string;

@@ -263,7 +263,7 @@ export default function FactGForm({ closeFactGModal, onScoreCalculated }: FactGF
         if (
           q.ScaleValue !== null &&
           q.ScaleValue !== undefined &&
-          q.ScaleValue !== "x"
+          q.ScaleValue !== ""
         ) {
           val = parseInt(q.ScaleValue, 10);
           if (isNaN(val)) val = null;
@@ -339,7 +339,7 @@ export default function FactGForm({ closeFactGModal, onScoreCalculated }: FactGF
         return {
           FactGCategoryId: found?.FactGCategoryId || "FGC_0001",
           FactGQuestionId: code,
-          ScaleValue: val !== null ? String(val) : "x",
+          ScaleValue: val !== null ? String(val) : "",
           FlagStatus: "Yes",
           WeekNo: 1,
         };

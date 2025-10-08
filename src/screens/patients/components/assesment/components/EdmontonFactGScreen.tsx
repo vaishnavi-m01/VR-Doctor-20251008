@@ -527,7 +527,7 @@ const subscaleScoreMap: Record<string, number> = {
         return {
           FactGCategoryId: found?.FactGCategoryId || "FGC_0001",
           FactGQuestionId: code,
-          ScaleValue: val !== null ? String(val) : "x",
+          ScaleValue: val !== null ? String(val) : "",
           FlagStatus: "Yes",
           WeekNo: 1,
         };
