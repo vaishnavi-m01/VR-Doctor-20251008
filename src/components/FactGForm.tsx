@@ -595,34 +595,26 @@ export default function FactGForm({ closeFactGModal, onScoreCalculated }: FactGF
       </ScrollView>
 
       <BottomBar>
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "700" }}>
-              PWB {score.PWB}
-            </Text>
-            <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "700" }}>
-              SWB {score.SWB}
-            </Text>
-            <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "700" }}>
-              EWB {score.EWB}
-            </Text>
-            <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "700" }}>
-              FWB {score.FWB}
-            </Text>
-            <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "800" }}>
-              TOTAL {score.TOTAL}
-            </Text>
-          </View>
+        <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "700" }}>
+          PWB {score.PWB}
+        </Text>
+        <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "700" }}>
+          SWB {score.SWB}
+        </Text>
+        <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "700" }}>
+          EWB {score.EWB}
+        </Text>
+        <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "700" }}>
+          FWB {score.FWB}
+        </Text>
+        <Text style={{ paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: "#0b362c", color: "white", fontWeight: "800" }}>
+          TOTAL {score.TOTAL}
+        </Text>
 
-          <View style={{ flexDirection: "row", gap: 8 }}>
-            <Btn variant="light" onPress={handleClear} style={{ paddingHorizontal: 16, paddingVertical: 8 }}>
-              Clear
-            </Btn>
-            <Btn onPress={handleSave} disabled={saving} style={{ paddingHorizontal: 16, paddingVertical: 8 }} className="font-bold text-base">
-              {saving ? "Saving..." : "Save & Close"}
-            </Btn>
-          </View>
-        </View>
+        <Btn variant="light" onPress={handleClear}>
+          Clear
+        </Btn>
+        <Btn onPress={handleSave} className="font-bold text-base">Save & Close</Btn>
       </BottomBar>
     </KeyboardAvoidingView>
   );
