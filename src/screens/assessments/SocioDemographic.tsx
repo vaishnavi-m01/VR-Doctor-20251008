@@ -614,6 +614,7 @@ export default function SocioDemographic() {
         StageOfCancer: cancerStage ? `Stage ${cancerStage}` : "",
         Gender: gender,
         MaritalStatus: maritalStatus,
+        NumberOfChildren:numberOfChildren || "",
         KnowledgeIn: KnowledgeIn || "",
         EducationLevel: educationLevel || "",
         CriteriaStatus: originalCriteriaStatus || "Excluded",

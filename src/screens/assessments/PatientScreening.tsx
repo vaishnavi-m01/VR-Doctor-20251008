@@ -248,7 +248,9 @@ export default function PatientScreening() {
           ParticipantId: patientId ?? '',
           StudyId: studyId ?? '',
         });
-        const s = (screeningRes.data as any).ResponseData?.[0];
+        const data = (screeningRes.data as any).ResponseData || [];
+        const s = data.sort((a:any, b:any) => b.SortKey - a.SortKey)[0]; 
+
         console.log("PatientScreening", s)
         if (s) {
           setPMSID(s.PMSID || '');
